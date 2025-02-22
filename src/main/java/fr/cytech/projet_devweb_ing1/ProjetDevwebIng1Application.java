@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProjetDevwebIng1Application {
     public static void main(String[] args) {
-        SpringApplication.run(projetDevwebIng1Application.class, args);
+        SpringApplication.run(ProjetDevwebIng1Application.class, args);
     }
 
     @GetMapping("/hello")
