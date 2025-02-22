@@ -30,22 +30,33 @@
 	<properties>
 		<java.version>21</java.version>
 	</properties>
-	<dependencies>
+    <dependencies>
+
+        <!-- THE GOAT -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+        <!-- Spring Boot webserver -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
-		</dependency>
+        </dependency>
+
+        <!-- Spring Boot tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
+        </dependency>
+
+        <!-- Security plugin -->
+        <dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+	    </dependency>
 	</dependencies>
 
 	<build>
