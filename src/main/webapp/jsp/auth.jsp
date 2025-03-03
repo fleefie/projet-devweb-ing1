@@ -1,6 +1,4 @@
 <%@ page import="fr.cytech.projet_devweb_ing1.util.JSPUtils" %>
-<%@ page import="java.util.Optional" %>
-<%@ page import="jakarta.servlet.jsp.JspWriter" %>
 <%@ page import="fr.cytech.projet_devweb_ing1.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
@@ -9,7 +7,6 @@
 </head>
 <body>
 <nav>
-    <a href="${pageContext.request.contextPath}/login">Login</a>
     <%
         User user = (User) session.getAttribute("user");
         if(user != null) {
