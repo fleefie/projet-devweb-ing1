@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>fr.cytech.ing1gi2-2025</groupId>
+        <groupId>fr.cytech</groupId>
         <artifactId>projet-devweb</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>projet-devweb-frontend</artifactId>
-    <name>projet-devweb-frontend</name>
+    <artifactId>frontend</artifactId>
+    <name>frontend</name>
     
     <build>
         <plugins>
