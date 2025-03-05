@@ -49,6 +49,8 @@ public class ApiUser {
             return ResponseEntity.badRequest().body("User not found.");
         }
 
+        System.out.println("Action lancée pour utilisateur ID " + userId);
+
         // TODO: Actual processing of the request
         return ResponseEntity.ok("Action executed for user ID: " + userId);
     }
