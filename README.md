@@ -4,25 +4,28 @@ Ce projet est un site web basé sur le sujet attaché dans /doc.
 
 # Dépendances
 
-- Java 21 (Merci de bien mettre en place ``$JAVA_HOME``
+- Java 21 (Merci de bien mettre en place ``$JAVA_HOME``)
 
 # Utilisation
 
-Compiler:
+Ce projet est un projet Maven composé de deux modules, le frontend et l'application.
+Il est donc important de correctement compiler dans le bon ordre. Le frontend est une
+dépendance de l'application.
 
-```shell
-./mvnw compile
-```
-
-Créer le jar:
-
-```shell
+```sh
+# Tout compiler:
 ./mvnw package
-```
 
-Lancer:
+# Compiler et installer localement le frontend seul:
+cd frontend && ../mvnw install
 
-```shell
-./mvnw spring-boot:run # A partir de Maven
-java -jar target/projet_devweb_ing1-[VERSION].jar # A partir du jar
+# Compiler l'application seule:
+cd application && ../mvnw package
+
+# Créer une image docker de l'application. Attention, le frontend
+# doit avoir été installé localement!
+cd application && ../mvnw spring-boot:create-image
+
+# Lancer l'application après l'avoir compilée
+java -jar application/target/application-VERSION.jar
 ```
