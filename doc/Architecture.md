@@ -22,7 +22,7 @@ Le backend est contenu dans [application](/application). Il s'agit d'un projet
 Spring-Boot standard, également. Il utilise le frontend comme une dépendance,
 ce qui permet de séparer une reconstruction du frontend sans toucher au backend.
 
-> [!note] Recompilation partielle
+> [!note] 
 > Le backend peut être recompilé sans retranspiler le frontend. Mais l'inverse
 > n'est pas le cas. Dans le futur, il faudra séparer les deux, voire même
 > séparer le backend de l'API au niveau de la compilation.
