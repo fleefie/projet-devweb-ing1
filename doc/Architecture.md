@@ -31,7 +31,7 @@ ce qui permet de séparer une reconstruction du frontend sans toucher au backend
 > Quoi qu'il en soit, je n'ai pas l'utilitée imédiate de le faire, donc tant pis :wink:
 
 Le backend possède un composant majeur, 
-[NotFoundIndexFilter](application/src/main/java/fr/cytech/projetdevwebbackend/NotFoundIndexFilter.java).
+[NotFoundIndexFilter](/application/src/main/java/fr/cytech/projetdevwebbackend/NotFoundIndexFilter.java).
 Cette classe est un filtre qui agit comme un controlleur. React est un framework
 pour construire des applications à une seule page (SPA). Or, une SPA nécéssite
 d'utiliser l'URL comme un moyen d'enrengistrer son état (pour faire simple). Cela
