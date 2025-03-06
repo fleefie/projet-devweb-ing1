@@ -1,4 +1,4 @@
-package fr.cytech.projetdevwebackend;
+package fr.cytech.projetdevwebbackend;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
