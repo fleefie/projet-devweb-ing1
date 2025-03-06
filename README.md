@@ -6,7 +6,7 @@ Ce projet est un site web basé sur le sujet attaché dans /doc.
 
 - Java 21 (Merci de bien mettre en place ``$JAVA_HOME``)
 
-# Utilisation
+# Compilation et lancement
 
 Ce projet est un projet Maven composé de deux modules, le frontend et l'application.
 Il est donc important de correctement compiler dans le bon ordre. Le frontend est une
