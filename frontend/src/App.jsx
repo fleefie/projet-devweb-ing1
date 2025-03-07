@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    const response = await fetch("http://localhost:8080/api/auth/login", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      alert("Login successful");
+    } else {
+      alert("Login failed");
+    }
+  };
+
+  const handleLogout = async () => {
+    await fetch("http://localhost:8080/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    alert("Logged out");
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h2>Login</h2>
+      <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleLogout}>Logout</button>
+    </div>
+  );
 }
 
-export default App
+export default App;
