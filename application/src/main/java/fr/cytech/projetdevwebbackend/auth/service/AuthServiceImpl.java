@@ -79,7 +79,8 @@ public class AuthServiceImpl implements AuthService {
         if (name.isBlank())
             return Either.left(UserAuthError.EmptyName);
 
-        return Either.right(userRepository.save(new User(name, username, email, passwordEncoder.encode(password))));
+        return Either
+                .right(userRepository.save(new User(name, username, email, passwordEncoder.encode(password), false)));
     }
 
     public enum UserAuthError {

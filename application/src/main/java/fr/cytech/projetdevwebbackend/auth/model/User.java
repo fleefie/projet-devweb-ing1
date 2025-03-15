@@ -20,7 +20,7 @@ public class User {
     private Long id;
 
     @NonNull
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @NonNull
@@ -34,6 +34,10 @@ public class User {
     @NonNull
     @Column(nullable = false)
     private String password;
+
+    @NonNull
+    @Column(nullable = false)
+    private Boolean verified;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
