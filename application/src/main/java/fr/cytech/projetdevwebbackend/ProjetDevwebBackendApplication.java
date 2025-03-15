@@ -10,16 +10,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cytech.projetdevwebbackend.auth.model.User;
+import fr.cytech.projetdevwebbackend.auth.model.repository.RoleRepository;
+import fr.cytech.projetdevwebbackend.auth.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.auth.service.*;
 
 @SpringBootApplication
 @RestController
 public class ProjetDevwebBackendApplication implements CommandLineRunner {
-
     @Autowired
     private AuthServiceImpl authService;
     @Autowired
     UserAdministrationService userAdministrationService;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Value("${app.admin-username}")
@@ -58,7 +63,9 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
             User admin = authService.register(adminUsername, adminPassword, adminEmail, "Administrator", false)
                     .getRight();
             admin.setVerified(true);
+            admin.addRole(roleRepository.findByName("ADMIN").get());
             userAdministrationService.acceptUser(adminUsername);
+            userRepository.save(admin);
         }
     }
 }

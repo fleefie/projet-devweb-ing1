@@ -2,6 +2,7 @@ package fr.cytech.projetdevwebbackend.auth.service;
 
 import lombok.AllArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import fr.cytech.projetdevwebbackend.auth.JwtTokenProvider;
 import fr.cytech.projetdevwebbackend.auth.dto.LoginDto;
+import fr.cytech.projetdevwebbackend.auth.model.Role;
 import fr.cytech.projetdevwebbackend.auth.model.User;
+import fr.cytech.projetdevwebbackend.auth.model.repository.RoleRepository;
 import fr.cytech.projetdevwebbackend.auth.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.util.Either;
 
@@ -29,6 +32,8 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
     private JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -87,8 +92,12 @@ public class AuthServiceImpl implements AuthService {
         else
             passwordHashed = password;
 
-        return Either
-                .right(userRepository.save(new User(name, username, email, passwordHashed, false)));
+        User user = new User(name, username, email, passwordHashed, false);
+        user.setRoles(new HashSet<Role>());
+        user.addRole(roleRepository.findByName("PENDING").get());
+        user = userRepository.save(user);
+
+        return Either.right(user);
     }
 
     public enum UserAuthError {
