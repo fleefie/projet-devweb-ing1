@@ -3,6 +3,7 @@ package fr.cytech.projetdevwebbackend.errors;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;
@@ -11,6 +12,16 @@ import org.springframework.context.annotation.Bean;
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
+    /**
+     * Configure static resource handling explicitly since @EnableWebMvc disables
+     * defaults
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/", "classpath:/public/")
+                .setCachePeriod(3600);
+    }
 
     /**
      * Configures custom error pages to prevent redirects to /error

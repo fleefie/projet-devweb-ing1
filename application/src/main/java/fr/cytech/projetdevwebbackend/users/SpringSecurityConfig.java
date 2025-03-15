@@ -72,10 +72,11 @@ public class SpringSecurityConfig {
 
                 // Configure request authorization
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints that don't require authentication
+                        // API needs auth...
+                        .requestMatchers("/api/users/**").authenticated()
+                        // Except authentication...
                         .requestMatchers("/api/auth/**").permitAll()
-                        // All other requests require authentication
-                        .anyRequest().authenticated())
+                        .requestMatchers("/**").permitAll())
 
                 // Configure exception handling for unauthorized requests
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
