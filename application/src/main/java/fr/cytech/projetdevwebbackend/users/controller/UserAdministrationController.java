@@ -61,7 +61,7 @@ public class UserAdministrationController {
      * @return ResponseEntity with success or error status
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/acceptuser")
+    @PostMapping("/accept-user")
     public ResponseEntity<?> acceptUser(@RequestBody @Valid UsernameDto usernameDto) {
         log.debug("Accepting user: {}", usernameDto.getUsername());
 
