@@ -1,7 +1,7 @@
 package fr.cytech.projetdevwebbackend.users.service;
 
 import fr.cytech.projetdevwebbackend.errors.types.AuthError;
-import fr.cytech.projetdevwebbackend.users.JwtAuthResponse;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtAuthResponse;
 import fr.cytech.projetdevwebbackend.users.dto.LoginDto;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.util.Either;

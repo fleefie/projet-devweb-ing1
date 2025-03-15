@@ -18,8 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.cytech.projetdevwebbackend.errors.types.AuthError;
-import fr.cytech.projetdevwebbackend.users.JwtAuthResponse;
-import fr.cytech.projetdevwebbackend.users.JwtTokenProvider;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtAuthResponse;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtTokenProvider;
 import fr.cytech.projetdevwebbackend.users.dto.LoginDto;
 import fr.cytech.projetdevwebbackend.users.model.Role;
 import fr.cytech.projetdevwebbackend.users.model.User;
