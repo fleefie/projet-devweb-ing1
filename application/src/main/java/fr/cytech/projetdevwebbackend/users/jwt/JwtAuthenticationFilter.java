@@ -1,4 +1,4 @@
-package fr.cytech.projetdevwebbackend.users;
+package fr.cytech.projetdevwebbackend.users.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

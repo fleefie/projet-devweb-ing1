@@ -17,7 +17,7 @@ import fr.cytech.projetdevwebbackend.users.dto.RegisterDto;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.service.AuthServiceImpl;
 import fr.cytech.projetdevwebbackend.errors.types.AuthError;
-import fr.cytech.projetdevwebbackend.users.JwtAuthResponse;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtAuthResponse;
 import fr.cytech.projetdevwebbackend.util.Either;
 import jakarta.validation.Valid;
 

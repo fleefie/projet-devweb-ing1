@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import fr.cytech.projetdevwebbackend.users.jwt.JwtAuthenticationEntryPoint;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtAuthenticationFilter;
 import fr.cytech.projetdevwebbackend.users.service.CustomUserDetailsService;
 
 /**
