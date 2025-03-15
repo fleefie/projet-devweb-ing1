@@ -40,13 +40,9 @@ Le filtre permet alors de, une fois par requête, transformer toute requête pou
 du contenu HTML en redirection vers cette page. Il permet également de ne pas transformer
 les requêtes vers l'API et vers du contenu non-HTML, comme du JS ou des images.
 
-# L'API
+# API
 
-L'API ne fait rien pour l'instant. De par NotFoundIndexFilter, elle est accessible sur
-/api. Toute requête vers /api doit renvoyer soit un résultat, soit une erreur si la
-requête est invalide. L'API ne doit jamais retourner 404 non plus. Les requêtes
-doivenet contenir les arguments, avec l'URL de l'API comme la commande. Exemple type:
-
-```sh
-curl -X POST "[URL]/api/users/chatrooms/create" -H "Content-Type: application/x-www-form-urlencoded" -d "user1=foo" -d "user2=bar"
-```
+L'API permet de communiquer avec le backend. Voir [la documentation de l'API](/doc/API.md).
+Elle retourne soit HTTP 200 OK pour une bonne requette, soit HTTP 400 BAD\_REQUEST
+pour une mauvaise. Dans les deux cas, elle peut ou non renvoyer un objet JSON
+contennant le résultat de la requette.
