@@ -72,6 +72,12 @@ public class AuthServiceImpl implements AuthService {
             return Either.left(UserAuthError.PasswordOnlyAlphanum);
         if (password.length() < 15)
             return Either.left(UserAuthError.PasswordTooShort);
+        if (password.isBlank())
+            return Either.left(UserAuthError.EmptyPassword);
+        if (username.isBlank())
+            return Either.left(UserAuthError.EmptyUsername);
+        if (name.isBlank())
+            return Either.left(UserAuthError.EmptyName);
 
         return Either.right(userRepository.save(new User(name, username, email, passwordEncoder.encode(password))));
     }
@@ -84,8 +90,9 @@ public class AuthServiceImpl implements AuthService {
         PasswordTooShort,
         PasswordOnlyAlphanum,
         PasswordNotAscii,
-        BadCreditentials,
+        PasswordsDoNotMatch,
         EmptyPassword,
-        EmptyUsername
+        EmptyUsername,
+        EmptyName
     }
 }
