@@ -37,7 +37,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
         if (!registerDto.getPassword().equals(registerDto.getPasswordConfirm())) {
-            return new ResponseEntity<String>("Passwords do not match", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>("{\"error\":\"PasswordsDoNotMatch\"}",
+                    HttpStatus.BAD_REQUEST);
         }
 
         Either<UserAuthError, User> user = authService.register(
@@ -47,9 +48,9 @@ public class AuthController {
                 registerDto.getName());
 
         if (user.isLeft())
-            return new ResponseEntity<String>("User creation error: " + user.getLeft().toString(),
+            return new ResponseEntity<String>("{\"error\":\"" + user.getLeft().toString() + "\"}",
                     HttpStatus.BAD_REQUEST);
         else
-            return new ResponseEntity<String>("User created, pending for aproval", HttpStatus.OK);
+            return new ResponseEntity<String>("{}", HttpStatus.OK);
     }
 }
