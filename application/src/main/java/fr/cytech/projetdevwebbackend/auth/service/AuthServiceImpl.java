@@ -54,7 +54,8 @@ public class AuthServiceImpl implements AuthService {
             return false;
     }
 
-    public Either<UserAuthError, User> register(String username, String password, String email, String name) {
+    public Either<UserAuthError, User> register(String username, String password, String email, String name,
+            Boolean doHash) {
         if (!Pattern.compile(
                 "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
                 .matcher(email)
@@ -79,8 +80,15 @@ public class AuthServiceImpl implements AuthService {
         if (name.isBlank())
             return Either.left(UserAuthError.EmptyName);
 
+        String passwordHashed = "";
+
+        if (doHash)
+            passwordHashed = passwordEncoder.encode(password);
+        else
+            passwordHashed = password;
+
         return Either
-                .right(userRepository.save(new User(name, username, email, passwordEncoder.encode(password), false)));
+                .right(userRepository.save(new User(name, username, email, passwordHashed, false)));
     }
 
     public enum UserAuthError {

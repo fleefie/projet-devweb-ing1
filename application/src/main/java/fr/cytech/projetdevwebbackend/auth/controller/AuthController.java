@@ -45,7 +45,8 @@ public class AuthController {
                 registerDto.getUsername(),
                 registerDto.getPassword(),
                 registerDto.getEmail(),
-                registerDto.getName());
+                registerDto.getName(),
+                true);
 
         if (user.isLeft())
             return new ResponseEntity<String>("{\"error\":\"" + user.getLeft().toString() + "\"}",
