@@ -4,7 +4,7 @@ CREATE TABLE users (
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    verified BOOLEAN NOT NULL,
+    verified BOOLEAN NOT NULL
 );
 
 CREATE TABLE roles (
