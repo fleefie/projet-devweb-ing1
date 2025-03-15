@@ -2,7 +2,6 @@ package fr.cytech.projetdevwebbackend.auth.service;
 
 import lombok.AllArgsConstructor;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -18,11 +17,11 @@ import org.springframework.stereotype.Service;
 
 import fr.cytech.projetdevwebbackend.auth.JwtTokenProvider;
 import fr.cytech.projetdevwebbackend.auth.dto.LoginDto;
-import fr.cytech.projetdevwebbackend.auth.model.Role;
 import fr.cytech.projetdevwebbackend.auth.model.User;
 import fr.cytech.projetdevwebbackend.auth.model.repository.RoleRepository;
 import fr.cytech.projetdevwebbackend.auth.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.util.Either;
+import jakarta.transaction.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -59,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
             return false;
     }
 
+    @Transactional
     public Either<UserAuthError, User> register(String username, String password, String email, String name,
             Boolean doHash) {
         if (!Pattern.compile(
@@ -93,7 +93,6 @@ public class AuthServiceImpl implements AuthService {
             passwordHashed = password;
 
         User user = new User(name, username, email, passwordHashed, false);
-        user.setRoles(new HashSet<Role>());
         user.addRole(roleRepository.findByName("PENDING").get());
         user = userRepository.save(user);
 

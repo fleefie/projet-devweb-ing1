@@ -9,10 +9,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.cytech.projetdevwebbackend.auth.model.Role;
 import fr.cytech.projetdevwebbackend.auth.model.User;
 import fr.cytech.projetdevwebbackend.auth.model.repository.RoleRepository;
 import fr.cytech.projetdevwebbackend.auth.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.auth.service.*;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 @SpringBootApplication
 @RestController
@@ -25,6 +29,8 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
     UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Value("${app.admin-username}")
@@ -39,6 +45,7 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) {
         Boolean i = false;
         String inputPass = null;
@@ -63,8 +70,11 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
             User admin = authService.register(adminUsername, adminPassword, adminEmail, "Administrator", false)
                     .getRight();
             admin.setVerified(true);
-            admin.addRole(roleRepository.findByName("ADMIN").get());
+            Role adminRole = roleRepository.findByName("ADMIN").orElseThrow();
+            adminRole = entityManager.merge(adminRole); // Ensure managed state
+            admin.addRole(adminRole);
             userAdministrationService.acceptUser(adminUsername);
+
             userRepository.save(admin);
         }
     }
