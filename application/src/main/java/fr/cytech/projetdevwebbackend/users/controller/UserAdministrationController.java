@@ -1,12 +1,9 @@
 package fr.cytech.projetdevwebbackend.users.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,11 +65,7 @@ public class UserAdministrationController {
         if (usernameDto.getUsername().isBlank()) {
             log.warn("Attempt to accept user with blank username");
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-            errorResponse.put("error", "Bad Request");
             errorResponse.put("message", "Username cannot be blank");
-            errorResponse.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            errorResponse.put("path", "/api/auth/acceptuser");
             return ResponseEntity.badRequest().body(errorResponse);
         }
 
@@ -85,12 +78,7 @@ public class UserAdministrationController {
                     log.warn("Failed to accept user {}: {}", usernameDto.getUsername(), error);
 
                     Map<String, Object> errorResponse = new HashMap<>();
-                    errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-                    errorResponse.put("error", "User Acceptance Failed");
                     errorResponse.put("message", error.getMessage());
-                    errorResponse.put("errorCode", error.toString());
-                    errorResponse.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                    errorResponse.put("path", "/api/auth/acceptuser");
 
                     return ResponseEntity.badRequest().body(errorResponse);
                 },
@@ -99,10 +87,7 @@ public class UserAdministrationController {
                     log.info("User accepted successfully: {}", usernameDto.getUsername());
 
                     Map<String, Object> response = new HashMap<>();
-                    response.put("status", HttpStatus.OK.value());
                     response.put("message", "User accepted successfully");
-                    response.put("username", user.getUsername());
-                    response.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
                     return ResponseEntity.ok(response);
                 });

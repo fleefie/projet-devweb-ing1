@@ -12,8 +12,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,12 +38,8 @@ public class GlobalExceptionHandler {
             fieldErrors.put(fieldName, errorMessage);
         });
 
-        Map<String, Object> response = createErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Validation Failed",
-                "The request contains invalid data",
-                "VALIDATION_ERROR",
-                request.getRequestURI());
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "The request contains invalid data");
         response.put("fieldErrors", fieldErrors);
 
         return ResponseEntity.badRequest().body(response);
@@ -60,12 +54,10 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException ex,
             HttpServletRequest request) {
 
-        return ResponseEntity.badRequest().body(createErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Malformed Request",
-                "The request body contains invalid JSON",
-                "INVALID_JSON",
-                request.getRequestURI()));
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("message", "The request body contains invalid JSON");
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     /**
@@ -77,30 +69,9 @@ public class GlobalExceptionHandler {
             MethodArgumentTypeMismatchException ex,
             HttpServletRequest request) {
 
-        return ResponseEntity.badRequest().body(createErrorResponse(
-                HttpStatus.BAD_REQUEST,
-                "Type Mismatch",
-                "Parameter '" + ex.getName() + "' has invalid value: " + ex.getValue(),
-                "TYPE_MISMATCH",
-                request.getRequestURI()));
-    }
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("message", "Parameter '" + ex.getName() + "' has invalid value: " + ex.getValue());
 
-    /**
-     * Creates a standardized error response structure
-     */
-    private Map<String, Object> createErrorResponse(HttpStatus status, String error,
-            String message, String errorCode, String path) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", status.value());
-        response.put("error", error);
-        response.put("message", message);
-        response.put("errorCode", errorCode);
-        response.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-
-        if (path != null) {
-            response.put("path", path);
-        }
-
-        return response;
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 }

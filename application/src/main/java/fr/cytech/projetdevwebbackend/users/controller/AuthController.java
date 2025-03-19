@@ -2,8 +2,6 @@ package fr.cytech.projetdevwebbackend.users.controller;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,25 +56,19 @@ public class AuthController {
         log.debug("Login attempt for user: {}", loginDto.getUsernameOrEmail());
 
         Either<AuthError, JwtAuthResponse> loginResult = authService.login(loginDto);
+        return loginResult.fold(
+                err -> {
+                    log.warn("Login failed for user {}: {}", loginDto.getUsernameOrEmail(), err);
 
-        if (loginResult.isRight()) {
-            JwtAuthResponse authResponse = loginResult.getRight();
-            log.info("User logged in successfully: {}", loginDto.getUsernameOrEmail());
-            return ResponseEntity.ok(authResponse);
-        } else {
-            AuthError error = loginResult.getLeft();
-            log.warn("Login failed for user {}: {}", loginDto.getUsernameOrEmail(), error);
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
 
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", HttpStatus.UNAUTHORIZED.value());
-            errorResponse.put("error", "Authentication Failed");
-            errorResponse.put("message", error.getMessage());
-            errorResponse.put("errorCode", error.toString());
-            errorResponse.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            errorResponse.put("path", "/api/auth/login");
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+                },
+                response -> {
+                    log.info("User logged in successfully: {}", loginDto.getUsernameOrEmail());
+                    return ResponseEntity.ok(response);
+                });
     }
 
     /**
@@ -94,12 +86,7 @@ public class AuthController {
             log.warn("Registration failed: passwords do not match for username: {}", registerDto.getUsername());
 
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-            errorResponse.put("error", "Validation Error");
             errorResponse.put("message", "Passwords do not match");
-            errorResponse.put("errorCode", "PasswordsDoNotMatch");
-            errorResponse.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            errorResponse.put("path", "/api/auth/register");
 
             return ResponseEntity.badRequest().body(errorResponse);
         }
@@ -117,12 +104,7 @@ public class AuthController {
                     log.warn("Registration failed for username {}: {}", registerDto.getUsername(), error);
 
                     Map<String, Object> errorResponse = new HashMap<>();
-                    errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-                    errorResponse.put("error", "Registration Failed");
                     errorResponse.put("message", error.getMessage());
-                    errorResponse.put("errorCode", error.toString());
-                    errorResponse.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                    errorResponse.put("path", "/api/auth/register");
 
                     return ResponseEntity.badRequest().body(errorResponse);
                 },
@@ -131,10 +113,7 @@ public class AuthController {
                     log.info("User registered successfully: {}", user.getUsername());
 
                     Map<String, Object> response = new HashMap<>();
-                    response.put("status", HttpStatus.OK.value());
                     response.put("message", "User registered successfully");
-                    response.put("username", user.getUsername());
-                    response.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
 
                     return ResponseEntity.ok(response);
                 });
