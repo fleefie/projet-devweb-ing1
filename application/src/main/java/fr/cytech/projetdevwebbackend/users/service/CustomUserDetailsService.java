@@ -49,8 +49,7 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
     /**
      * Implementation of Spring Security's UserDetailsService.
      * <p>
-     * This method is required by Spring Security but delegates to our functional
-     * implementation.
+     * This method is required by Spring Security but delegates to our own impl.
      *
      * @param usernameOrEmail The username or email to load
      * @return UserDetails object for Spring Security
@@ -69,9 +68,9 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
     }
 
     /**
-     * Implementation of our functional UserDetailsProvider.
+     * Better implementation of UserDetailsProvider.
      * <p>
-     * Uses functional error handling with Either instead of exceptions.
+     * Uses proper error handling instead of exceptions.
      *
      * @param usernameOrEmail The username or email to load
      * @return Either containing error information or user details
@@ -90,7 +89,7 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
 
         User user = userOptional.get();
 
-        // Check if email is verified (if the application requires verified emails)
+        // Check if email is verified
         if (!user.isVerified()) {
             log.warn("Login attempt by user with unverified email: {}", usernameOrEmail);
             return Either.left(AuthError.EMAIL_NOT_VALIDATED);
@@ -117,10 +116,10 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                true, // enabled - you may want to map this to a property in your User entity
-                true, // accountNonExpired - you may want to map this
-                true, // credentialsNonExpired - you may want to map this
-                !user.isLocked(), // accountNonLocked - based on your isLocked() method
+                true, // enabled
+                true, // accountNonExpired
+                true, // credentialsNonExpired
+                !user.isLocked(),
                 authorities);
 
         return Either.right(userDetails);
