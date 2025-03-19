@@ -136,4 +136,52 @@ public class UserAdministrationService {
             return Optional.of(UserAdministrationError.USER_NOT_FOUND);
         }
     }
+
+    /**
+     * Adds a role to a user.
+     * 
+     * @param username The name of the user to modify
+     * @param role     the role
+     * @return Nothing if the operation was sucessful, an error if not
+     */
+    @Transactional
+    public Optional<UserAdministrationError> addRole(String username, String roleName) {
+        return userRepository.findByUsernameOrEmail(username, username)
+                .map(user -> {
+                    return roleRepository.findByName(roleName).map(role -> {
+                        user.addRole(role);
+                        return Optional.<UserAdministrationError>empty();
+                    })
+                            .orElseGet(() -> {
+                                return Optional.of(UserAdministrationError.ROLE_NOT_FOUND);
+                            });
+                })
+                .orElseGet(() -> {
+                    return Optional.of(UserAdministrationError.USER_NOT_FOUND);
+                });
+    }
+
+    /**
+     * Deletes a role from a user.
+     * 
+     * @param username The name of the user to modify
+     * @param role     the role
+     * @return Nothing if the operation was sucessful, an error if not
+     */
+    @Transactional
+    public Optional<UserAdministrationError> deleteRole(String username, String roleName) {
+        return userRepository.findByUsernameOrEmail(username, username)
+                .map(user -> {
+                    return roleRepository.findByName(roleName).map(role -> {
+                        user.removeRole(role);
+                        return Optional.<UserAdministrationError>empty();
+                    })
+                            .orElseGet(() -> {
+                                return Optional.of(UserAdministrationError.ROLE_NOT_FOUND);
+                            });
+                })
+                .orElseGet(() -> {
+                    return Optional.of(UserAdministrationError.USER_NOT_FOUND);
+                });
+    }
 }

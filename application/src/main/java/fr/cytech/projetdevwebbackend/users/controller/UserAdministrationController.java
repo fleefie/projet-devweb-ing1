@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cytech.projetdevwebbackend.users.dto.UsernameDto;
+import fr.cytech.projetdevwebbackend.users.dto.UsernameRoleDto;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.service.UserAdministrationService;
 import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
@@ -138,6 +139,100 @@ public class UserAdministrationController {
 
                             Map<String, Object> response = new HashMap<>();
                             response.put("message", "User deleted successfully");
+
+                            return ResponseEntity.ok(response);
+                        });
+    }
+
+    /**
+     * Adds a role to a user.
+     * <p>
+     * Requires ADMIN role.
+     *
+     * @param usernameDto DTO containing the username to accept
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/remove-role")
+    public ResponseEntity<?> deleteRole(@RequestBody @Valid UsernameRoleDto usernameRoleDto) {
+
+        if (usernameRoleDto.getUsername().equals(adminUsername)) {
+            log.warn("Tried to edit administrator acount");
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Unable to edit administrator account");
+
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // Try to edit the user
+        Optional<UserAdministrationError> ret = userAdministrationService.deleteRole(usernameRoleDto.getUsername(),
+                usernameRoleDto.getRole());
+        return ret.map(
+                err -> {
+                    log.warn("Failed to edit user {} with role {}: {}", usernameRoleDto.getUsername(),
+                            usernameRoleDto.getRole(), err.getMessage());
+
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
+
+                    return ResponseEntity.badRequest().body(errorResponse);
+
+                })
+                .orElseGet(
+                        () -> {
+                            log.info("User {}'s role {} removed successfully", usernameRoleDto.getUsername(),
+                                    usernameRoleDto.getRole());
+
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("message", "User edited successfully");
+
+                            return ResponseEntity.ok(response);
+                        });
+    }
+
+    /**
+     * Adds a role to a user.
+     * <p>
+     * Requires ADMIN role.
+     *
+     * @param usernameDto DTO containing the username to accept
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/add-role")
+    public ResponseEntity<?> addRole(@RequestBody @Valid UsernameRoleDto usernameRoleDto) {
+
+        if (usernameRoleDto.getUsername().equals(adminUsername)) {
+            log.warn("Tried to edit administrator acount");
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Unable to edit administrator account");
+
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // Try to edit the user
+        Optional<UserAdministrationError> ret = userAdministrationService.deleteRole(usernameRoleDto.getUsername(),
+                usernameRoleDto.getRole());
+        return ret.map(
+                err -> {
+                    log.warn("Failed to edit user {} with role {}: {}", usernameRoleDto.getUsername(),
+                            usernameRoleDto.getRole(), err.getMessage());
+
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
+
+                    return ResponseEntity.badRequest().body(errorResponse);
+
+                })
+                .orElseGet(
+                        () -> {
+                            log.info("User {} was given the role {} successfully", usernameRoleDto.getUsername(),
+                                    usernameRoleDto.getRole());
+
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("message", "User edited successfully");
 
                             return ResponseEntity.ok(response);
                         });
