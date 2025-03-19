@@ -10,7 +10,6 @@ import fr.cytech.projetdevwebbackend.util.Either;
  * <p>
  * This interface provides an alternative to Spring Security's
  * UserDetailsService
- * that uses functional error handling with Either instead of exceptions.
  *
  * @author fleefie
  * @since 2025-03-15
