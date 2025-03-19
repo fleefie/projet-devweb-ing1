@@ -2,8 +2,10 @@ package fr.cytech.projetdevwebbackend.users.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +38,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserAdministrationController {
 
     private final UserAdministrationService userAdministrationService;
+
+    @Value("${app.admin-username}")
+    private String adminUsername;
 
     /**
      * Creates a new user administration controller with required dependencies.
@@ -91,5 +96,50 @@ public class UserAdministrationController {
 
                     return ResponseEntity.ok(response);
                 });
+    }
+
+    /**
+     * Deletes a user.
+     * <p>
+     * Requires ADMIN role.
+     *
+     * @param usernameDto DTO containing the username to accept
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestBody @Valid UsernameDto usernameDto) {
+
+        // That would be quite a funny feature to have :-)
+        if (usernameDto.getUsername().equals(adminUsername)) {
+            log.warn("Tried to delete administrator acount");
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Unable to delete administrator account");
+
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // Try to delete the user
+        Optional<UserAdministrationError> ret = userAdministrationService.deleteUser(usernameDto.getUsername());
+        return ret.map(
+                err -> {
+                    log.warn("Failed to delete user {}: {}", usernameDto.getUsername(), err.getMessage());
+
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
+
+                    return ResponseEntity.badRequest().body(errorResponse);
+
+                })
+                .orElseGet(
+                        () -> {
+                            log.info("User deleted successfully: {}", usernameDto.getUsername());
+
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("message", "User deleted successfully");
+
+                            return ResponseEntity.ok(response);
+                        });
     }
 }

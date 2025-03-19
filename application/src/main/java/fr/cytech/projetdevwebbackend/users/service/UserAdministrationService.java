@@ -1,5 +1,7 @@
 package fr.cytech.projetdevwebbackend.users.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,5 +117,23 @@ public class UserAdministrationService {
      */
     private Role getRoleOrNull(String roleName) {
         return roleRepository.findByName(roleName).orElse(null);
+    }
+
+    /**
+     * Deletes a user by name.
+     *
+     * @param username The name of the user to delete
+     * @return Nothing if the user was deleted, an error if the user could not be
+     *         deleted
+     */
+    @Transactional
+    public Optional<UserAdministrationError> deleteUser(String username) {
+        User user = userRepository.findByUsernameOrEmail(username, username).orElse(null);
+        if (user != null) {
+            userRepository.delete(user);
+            return Optional.empty();
+        } else {
+            return Optional.of(UserAdministrationError.USER_NOT_FOUND);
+        }
     }
 }

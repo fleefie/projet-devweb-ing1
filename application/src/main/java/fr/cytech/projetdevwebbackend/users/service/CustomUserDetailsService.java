@@ -12,11 +12,9 @@ import org.springframework.stereotype.Service;
 
 import fr.cytech.projetdevwebbackend.errors.types.AuthError;
 import fr.cytech.projetdevwebbackend.users.model.Role;
-import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.util.Either;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -80,49 +78,34 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
         log.debug("Loading user details for: {}", usernameOrEmail);
 
         // Find user by username or email
-        Optional<User> userOptional = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+        return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .map(
+                        // If user was found,
+                        user -> {
+                            // Map user roles to Spring Security authorities
+                            Set<GrantedAuthority> authorities = mapRolesToAuthorities(user.getRoles());
 
-        if (userOptional.isEmpty()) {
-            log.warn("Failed login attempt with non-existent user: {}", usernameOrEmail);
-            return Either.left(AuthError.USER_DOES_NOT_EXIST);
-        }
+                            log.debug("User {} loaded successfully with {} authorities", usernameOrEmail,
+                                    authorities.size());
 
-        User user = userOptional.get();
+                            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                                    user.getUsername(),
+                                    user.getPassword(),
+                                    user.isEnabled(),
+                                    true, // accountNonExpired
+                                    true, // credentialsNonExpired
+                                    !user.isLocked(),
+                                    authorities);
 
-        // Check if email is verified
-        if (!user.isVerified()) {
-            log.warn("Login attempt by user with unverified email: {}", usernameOrEmail);
-            return Either.left(AuthError.EMAIL_NOT_VALIDATED);
-        }
+                            return Either.<AuthError, UserDetails>right(userDetails);
 
-        // Check if user has a PENDING role - users with PENDING role are not yet
-        // accepted
-        if (!user.isAccepted()) {
-            log.warn("Login attempt by user with pending acceptance: {}", usernameOrEmail);
-            return Either.left(AuthError.ACCOUNT_NOT_ACCEPTED);
-        }
-
-        // Other status checks based on your User implementation
-        if (user.isLocked()) {
-            log.warn("Login attempt by locked user account: {}", usernameOrEmail);
-            return Either.left(AuthError.ACCOUNT_LOCKED);
-        }
-
-        // Map user roles to Spring Security authorities
-        Set<GrantedAuthority> authorities = mapRolesToAuthorities(user.getRoles());
-
-        log.debug("User {} loaded successfully with {} authorities", usernameOrEmail, authorities.size());
-
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                true, // enabled
-                true, // accountNonExpired
-                true, // credentialsNonExpired
-                !user.isLocked(),
-                authorities);
-
-        return Either.right(userDetails);
+                        })
+                .orElseGet(
+                        // If user wasn't found
+                        () -> {
+                            log.warn("Failed login attempt with non-existent user: {}", usernameOrEmail);
+                            return Either.<AuthError, UserDetails>left(AuthError.USER_DOES_NOT_EXIST);
+                        });
     }
 
     /**
