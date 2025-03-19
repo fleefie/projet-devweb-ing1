@@ -104,7 +104,7 @@ public class UserAdministrationController {
      * <p>
      * Requires ADMIN role.
      *
-     * @param usernameDto DTO containing the username to accept
+     * @param usernameDto DTO containing the username to delete
      * @return ResponseEntity with success or error status
      */
     @PreAuthorize("hasRole('ADMIN')")
@@ -149,7 +149,7 @@ public class UserAdministrationController {
      * <p>
      * Requires ADMIN role.
      *
-     * @param usernameDto DTO containing the username to accept
+     * @param usernameDto DTO containing the username and role to work with
      * @return ResponseEntity with success or error status
      */
     @PreAuthorize("hasRole('ADMIN')")
@@ -196,7 +196,7 @@ public class UserAdministrationController {
      * <p>
      * Requires ADMIN role.
      *
-     * @param usernameDto DTO containing the username to accept
+     * @param usernameRoleDto DTO containing the username and role to work with
      * @return ResponseEntity with success or error status
      */
     @PreAuthorize("hasRole('ADMIN')")
