@@ -81,7 +81,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return List of users that match, including sensitive data
      */
     @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
-    List<AdminSearchProjection> searchByNameAdmin(@Param("username") String username);
+    List<AdminSearchProjection> searchByNameAdmin(@Param("username") String userLike);
 
     /**
      * Regular user search, using a name pattern.
@@ -90,7 +90,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return List of users that match, only including username and roles
      */
     @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
-    List<UserSearchProjection> searchByName(@Param("username") String username);
+    List<UserSearchProjection> searchByName(@Param("username") String userLike);
 
     /**
      * Finds all users that need email verification.

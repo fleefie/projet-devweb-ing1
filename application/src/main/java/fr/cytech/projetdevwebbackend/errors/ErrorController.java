@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,20 +44,8 @@ public class ErrorController {
 
     private ResponseEntity<Object> createErrorResponse(HttpServletRequest request, HttpStatus status, String error) {
         Map<String, Object> body = new HashMap<>();
-        body.put("status", status.value());
-        body.put("error", error);
         body.put("message", status.getReasonPhrase());
-        body.put("timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        body.put("path", getOriginalRequestPath(request));
 
         return new ResponseEntity<>(body, status);
-    }
-
-    private String getOriginalRequestPath(HttpServletRequest request) {
-        String originalUri = (String) request.getAttribute("javax.servlet.error.request_uri");
-        if (originalUri != null) {
-            return originalUri;
-        }
-        return request.getRequestURI();
     }
 }

@@ -141,7 +141,7 @@ public class UserAdministrationService {
      * Adds a role to a user.
      * 
      * @param username The name of the user to modify
-     * @param role     the role
+     * @param roleName the role
      * @return Nothing if the operation was sucessful, an error if not
      */
     @Transactional
@@ -165,7 +165,7 @@ public class UserAdministrationService {
      * Deletes a role from a user.
      * 
      * @param username The name of the user to modify
-     * @param role     the role
+     * @param roleName the role
      * @return Nothing if the operation was sucessful, an error if not
      */
     @Transactional
