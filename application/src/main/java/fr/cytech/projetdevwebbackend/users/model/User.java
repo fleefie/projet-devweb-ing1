@@ -63,12 +63,15 @@ public class User {
 
     @NonNull
     @Column(nullable = false)
+    @Getter
     private Boolean verified;
 
     @Column(nullable = false)
+    @Getter
     private Boolean locked = false;
 
     @Column(nullable = false)
+    @Getter
     private Boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)

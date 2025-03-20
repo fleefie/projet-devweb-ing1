@@ -1,9 +1,7 @@
 package fr.cytech.projetdevwebbackend.users.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +27,7 @@ public class UsernameDto {
      * Must not be null or empty.
      */
     @NotNull(message = "Username cannot be null")
-    @NotBlank(message = "Username cannot be empty")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    @Pattern(regexp = "[a-zA-Z0-9]+", message = "Username must be alphanumeric")
+    @Pattern(regexp = "[a-zA-Z0-9]*", message = "Username must be alphanumeric")
     private String username;
 
     /**

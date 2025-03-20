@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameRoleDto;
 import fr.cytech.projetdevwebbackend.users.model.User;
+import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.users.service.UserAdministrationService;
 import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
 import fr.cytech.projetdevwebbackend.util.Either;
@@ -39,19 +40,16 @@ import lombok.extern.slf4j.Slf4j;
 public class UserAdministrationController {
 
     private final UserAdministrationService userAdministrationService;
+    private final UserRepository userRepository;
 
     @Value("${app.admin-username}")
     private String adminUsername;
 
-    /**
-     * Creates a new user administration controller with required dependencies.
-     *
-     * @param userAdministrationService The service handling user administration
-     *                                  logic
-     */
     @Autowired
-    public UserAdministrationController(UserAdministrationService userAdministrationService) {
+    public UserAdministrationController(UserAdministrationService userAdministrationService,
+            UserRepository userRepository) {
         this.userAdministrationService = userAdministrationService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -149,7 +147,7 @@ public class UserAdministrationController {
      * <p>
      * Requires ADMIN role.
      *
-     * @param usernameDto DTO containing the username and role to work with
+     * @param usernameRoleDto DTO containing the username and role to work with
      * @return ResponseEntity with success or error status
      */
     @PreAuthorize("hasRole('ADMIN')")
@@ -236,5 +234,27 @@ public class UserAdministrationController {
 
                             return ResponseEntity.ok(response);
                         });
+    }
+
+    /**
+     * Gets every user in the system.
+     *
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/search-users")
+    public ResponseEntity<?> searchUsers(@RequestBody @Valid UsernameDto usernameDto) {
+        return ResponseEntity.ok(userRepository.searchByName(usernameDto.getUsername()));
+    }
+
+    /**
+     * Gets every user in the system, with all information.
+     *
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/search-users-admin")
+    public ResponseEntity<?> searchUsersAdmin(@RequestBody @Valid UsernameDto usernameDto) {
+        return ResponseEntity.ok(userRepository.searchByNameAdmin(usernameDto.getUsername()));
     }
 }

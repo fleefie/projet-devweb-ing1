@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import fr.cytech.projetdevwebbackend.users.model.User;
+import fr.cytech.projetdevwebbackend.users.model.projections.AdminSearchProjection;
+import fr.cytech.projetdevwebbackend.users.model.projections.UserSearchProjection;
 
 /**
  * Repository for managing User entities.
@@ -71,6 +73,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName")
     List<User> findByRoleName(@Param("roleName") String roleName);
+
+    /**
+     * Administrator search, using a name pattern.
+     *
+     * @param userLike username to search
+     * @return List of users that match, including sensitive data
+     */
+    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
+    List<AdminSearchProjection> searchByNameAdmin(@Param("username") String username);
+
+    /**
+     * Regular user search, using a name pattern.
+     * 
+     * @param userLike username to search
+     * @return List of users that match, only including username and roles
+     */
+    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%'))")
+    List<UserSearchProjection> searchByName(@Param("username") String username);
 
     /**
      * Finds all users that need email verification.
