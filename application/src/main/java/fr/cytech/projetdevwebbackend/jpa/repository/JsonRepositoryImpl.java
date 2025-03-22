@@ -16,6 +16,19 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of JsonRepositoryFragment providing JSON query capabilities.
+ * <p>
+ * This implementation extends SimpleJpaRepository to provide both standard JPA
+ * repository functionality and additional JSON query methods. It uses Jackson
+ * for JSON parsing and querying.
+ *
+ * @param <T>  the domain type the repository manages
+ * @param <ID> the type of the id of the entity the repository manages
+ * 
+ * @author fleefie
+ * @since 2025-03-22
+ */
 @Transactional(readOnly = true)
 public class JsonRepositoryImpl<T, ID extends Serializable>
         extends SimpleJpaRepository<T, ID>
@@ -26,6 +39,12 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
     private final Map<String, Field> jsonFields;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Creates a new JsonRepositoryImpl instance.
+     *
+     * @param entityInformation information about the entity
+     * @param entityManager     the JPA entity manager
+     */
     public JsonRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
         super(entityInformation, entityManager);
         this.entityManager = entityManager;
@@ -34,6 +53,11 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
         this.objectMapper = new ObjectMapper();
     }
 
+    /**
+     * Discovers all fields annotated with @JsonColumn in the entity class.
+     *
+     * @return map of field names to Field objects for all JSON fields
+     */
     private Map<String, Field> findJsonFields() {
         Map<String, Field> fields = new HashMap<>();
         ReflectionUtils.doWithFields(domainClass, field -> {
@@ -76,6 +100,14 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Recursively checks if a JsonNode or any of its children contains the
+     * specified text.
+     *
+     * @param node       the JSON node to check
+     * @param searchText the text to search for (lowercase)
+     * @return true if the text is found, false otherwise
+     */
     private boolean containsValueInJsonNode(JsonNode node, String searchText) {
         if (node.isValueNode()) {
             return node.asText().toLowerCase().contains(searchText);
@@ -124,6 +156,14 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Recursively checks if a JsonNode or any of its children contains the
+     * specified key.
+     *
+     * @param node the JSON node to check
+     * @param key  the key to search for
+     * @return true if the key is found, false otherwise
+     */
     private boolean hasJsonKey(JsonNode node, String key) {
         if (node.isObject()) {
             if (node.has(key)) {
@@ -174,6 +214,17 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Recursively checks if a JsonNode or any of its children contains the
+     * specified key
+     * with a matching value.
+     *
+     * @param node        the JSON node to check
+     * @param key         the key to search for
+     * @param value       the object value to match
+     * @param stringValue the string representation of the value
+     * @return true if the key with matching value is found, false otherwise
+     */
     private boolean hasKeyWithValue(JsonNode node, String key, Object value, String stringValue) {
         if (node.isObject()) {
             if (node.has(key)) {
@@ -200,6 +251,17 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
         return false;
     }
 
+    /**
+     * Checks if a JSON node's value matches the specified value.
+     * <p>
+     * This method handles type-specific comparisons for numbers, booleans,
+     * strings, and null values.
+     *
+     * @param valueNode   the JSON node value to check
+     * @param value       the object value to compare against
+     * @param stringValue the string representation of the value
+     * @return true if the values match, false otherwise
+     */
     private boolean valueMatches(JsonNode valueNode, Object value, String stringValue) {
         if (value == null) {
             return valueNode.isNull();

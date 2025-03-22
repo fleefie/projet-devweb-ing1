@@ -106,6 +106,10 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
         Device dev = new Device("Test Device");
         dev.setProperties(test);
         deviceRepository.save(dev);
+        System.out.println(dev.getProperties());
+        dev.setProperty("arg1", "UwU");
+        System.out.println(dev.getProperties());
+        deviceRepository.save(dev);
     }
 
     /**
