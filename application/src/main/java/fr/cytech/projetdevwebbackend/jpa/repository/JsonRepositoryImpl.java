@@ -70,7 +70,7 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
     }
 
     @Override
-    public List<T> findByValues(String searchText) {
+    public List<T> jsonSearchByValue(String searchText) {
         if (jsonFields.isEmpty()) {
             return Collections.emptyList();
         }
@@ -131,7 +131,7 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
     }
 
     @Override
-    public List<T> findByKey(String key) {
+    public List<T> jsonSearchByKey(String key) {
         if (jsonFields.isEmpty()) {
             return Collections.emptyList();
         }
@@ -188,7 +188,7 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
     }
 
     @Override
-    public List<T> findByKeyAndValue(String key, Object value) {
+    public List<T> jsonSearchByKeyAndValue(String key, Object value) {
         if (jsonFields.isEmpty()) {
             return Collections.emptyList();
         }
@@ -285,20 +285,20 @@ public class JsonRepositoryImpl<T, ID extends Serializable>
     }
 
     @Override
-    public Optional<T> findFirstByKeyAndValue(String key, Object value) {
-        List<T> results = findByKeyAndValue(key, value);
+    public Optional<T> jsonSearchFirstByKeyAndValue(String key, Object value) {
+        List<T> results = jsonSearchByKeyAndValue(key, value);
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
     @Override
     public boolean existsByKeyAndValue(String key, Object value) {
-        List<T> results = findByKeyAndValue(key, value);
+        List<T> results = jsonSearchByKeyAndValue(key, value);
         return !results.isEmpty();
     }
 
     @Override
     public long countByKey(String key) {
-        List<T> results = findByKey(key);
+        List<T> results = jsonSearchByKey(key);
         return results.size();
     }
 }

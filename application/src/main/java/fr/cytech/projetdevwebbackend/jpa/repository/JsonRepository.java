@@ -15,7 +15,7 @@ public interface JsonRepository<T, ID extends Serializable> {
      * @return a list of entities that contain the search text in any of their JSON
      *         values
      */
-    List<T> findByValues(String searchText);
+    List<T> jsonSearchByValue(String searchText);
 
     /**
      * Finds entities that contain a specific JSON key.
@@ -23,7 +23,7 @@ public interface JsonRepository<T, ID extends Serializable> {
      * @param key the JSON key to search for
      * @return a list of entities that contain the specified JSON key
      */
-    List<T> findByKey(String key);
+    List<T> jsonSearchByKey(String key);
 
     /**
      * Finds entities where a specific JSON key matches a given value.
@@ -32,7 +32,7 @@ public interface JsonRepository<T, ID extends Serializable> {
      * @param value the value that the key should have
      * @return a list of entities where the specified key matches the given value
      */
-    List<T> findByKeyAndValue(String key, Object value);
+    List<T> jsonSearchByKeyAndValue(String key, Object value);
 
     /**
      * Finds the first entity where a specific JSON key matches a given value.
@@ -42,7 +42,7 @@ public interface JsonRepository<T, ID extends Serializable> {
      * @return an Optional containing the first matching entity, or an empty
      *         Optional if none found
      */
-    Optional<T> findFirstByKeyAndValue(String key, Object value);
+    Optional<T> jsonSearchFirstByKeyAndValue(String key, Object value);
 
     /**
      * Checks if any entity contains the specified JSON key with the given value.

@@ -25,7 +25,7 @@ public interface JsonRepositoryFragment<T, ID> {
      * @param searchText the text to search for
      * @return list of entities containing the search text
      */
-    List<T> findByValues(String searchText);
+    List<T> jsonSearchByValue(String searchText);
 
     /**
      * Finds entities that have the specified key in any JSON field.
@@ -33,7 +33,7 @@ public interface JsonRepositoryFragment<T, ID> {
      * @param key the JSON key to search for
      * @return list of entities having the specified key
      */
-    List<T> findByKey(String key);
+    List<T> jsonSearchByKey(String key);
 
     /**
      * Finds entities where the specified key has the specified value in any JSON
@@ -43,7 +43,7 @@ public interface JsonRepositoryFragment<T, ID> {
      * @param value the value the key should have
      * @return list of entities matching the key-value pair
      */
-    List<T> findByKeyAndValue(String key, Object value);
+    List<T> jsonSearchByKeyAndValue(String key, Object value);
 
     /**
      * Finds the first entity where the specified key has the specified value.
@@ -53,7 +53,7 @@ public interface JsonRepositoryFragment<T, ID> {
      * @return an optional containing the first matching entity, or empty if none
      *         found
      */
-    Optional<T> findFirstByKeyAndValue(String key, Object value);
+    Optional<T> jsonSearchFirstByKeyAndValue(String key, Object value);
 
     /**
      * Checks if any entity has the specified key with the specified value.

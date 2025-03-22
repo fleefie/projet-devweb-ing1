@@ -110,6 +110,7 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
         dev.setProperty("arg1", "UwU");
         System.out.println(dev.getProperties());
         deviceRepository.save(dev);
+        System.out.println(deviceRepository.jsonSearchByValue("UwU"));
     }
 
     /**

@@ -1,6 +1,7 @@
 package fr.cytech.projetdevwebbackend.devices.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -169,5 +170,59 @@ public class Device {
     public Device(String name, Map<String, Object> properties) {
         this.name = name;
         setProperties(properties);
+    }
+
+    /**
+     * Returns a string representation of this Device.
+     * <p>
+     * Includes the device ID, name, and a summary of its properties.
+     * For readability, only shows the first few property keys if there are many.
+     *
+     * @return a string representation of the device
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Device{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+
+        // Add properties summary
+        try {
+            Map<String, Object> props = getProperties();
+            int propCount = props.size();
+
+            sb.append(", properties=");
+            if (propCount == 0) {
+                sb.append("{}");
+            } else {
+                sb.append("{");
+                sb.append("size=").append(propCount);
+
+                // Show up to 3 property keys as a preview
+                if (propCount > 0) {
+                    sb.append(", keys=[");
+                    Iterator<String> keyIter = props.keySet().iterator();
+                    int count = 0;
+                    while (keyIter.hasNext() && count < 3) {
+                        if (count > 0) {
+                            sb.append(", ");
+                        }
+                        sb.append(keyIter.next());
+                        count++;
+                    }
+                    if (propCount > 3) {
+                        sb.append(", ...");
+                    }
+                    sb.append("]");
+                }
+                sb.append("}");
+            }
+        } catch (Exception e) {
+            // In case there's an issue with JSON parsing
+            sb.append(", properties=<error parsing>");
+        }
+
+        sb.append('}');
+        return sb.toString();
     }
 }
