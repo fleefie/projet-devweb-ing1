@@ -1,4 +1,4 @@
-package fr.cytech.projetdevwebbackend.errors;
+package fr.cytech.projetdevwebbackend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

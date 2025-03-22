@@ -1,4 +1,4 @@
-package fr.cytech.projetdevwebbackend.users;
+package fr.cytech.projetdevwebbackend.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
