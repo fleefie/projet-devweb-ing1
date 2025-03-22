@@ -184,4 +184,23 @@ public class UserAdministrationService {
                     return Optional.of(UserAdministrationError.USER_NOT_FOUND);
                 });
     }
+
+    /**
+     * Adds to the user's score
+     * 
+     * @param username The name of the user to modify
+     * @param delta    Score differential to apply
+     * @return Nothing if the operation was sucessful, an error if not
+     */
+    @Transactional
+    public Optional<UserAdministrationError> addScore(String username, Integer delta) {
+        return userRepository.findByUsernameOrEmail(username, username)
+                .map(user -> {
+                    user.addScore(delta);
+                    return Optional.<UserAdministrationError>empty();
+                })
+                .orElseGet(() -> {
+                    return Optional.of(UserAdministrationError.USER_NOT_FOUND);
+                });
+    }
 }

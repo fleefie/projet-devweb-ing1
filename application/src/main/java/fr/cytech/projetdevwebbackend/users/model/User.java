@@ -20,7 +20,7 @@ import java.util.Set;
  * Users can have multiple roles and various status flags including verification
  * status.
  * This entity handles core user information for authentication and
- * authorization.
+ * authorization, as well as user score.
  *
  * @author fleefie
  * @since 2025-03-15
@@ -65,11 +65,19 @@ public class User {
     @Column(nullable = false)
     private Boolean verified;
 
+    @NonNull
     @Column(nullable = false)
     private Boolean locked = false;
 
+    @NonNull
     @Column(nullable = false)
     private Boolean enabled = true;
+
+    @Column(nullable = false)
+    @NonNull
+    @Getter
+    @Setter
+    private Integer points = 0;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
@@ -101,6 +109,15 @@ public class User {
         this.roles = new HashSet<>();
         this.locked = false;
         this.enabled = true;
+    }
+
+    /**
+     * Change user score additively.
+     *
+     * @param delta score difference to apply
+     */
+    public void addScore(Integer delta) {
+        this.points += delta;
     }
 
     /**

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.cytech.projetdevwebbackend.users.dto.UsernameDto;
+import fr.cytech.projetdevwebbackend.users.dto.UsernameIntegerDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameRoleDto;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
@@ -256,5 +257,41 @@ public class UserAdministrationController {
     @PostMapping("/search-users-admin")
     public ResponseEntity<?> searchUsersAdmin(@RequestBody @Valid UsernameDto usernameDto) {
         return ResponseEntity.ok(userRepository.searchByNameAdmin(usernameDto.getUsername()));
+    }
+
+    /**
+     * Change a user's score.
+     * <p>
+     * Requires ADMIN role.
+     *
+     * @param usernameIntegerDto DTO containing the username and score differential
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/edit-score")
+    public ResponseEntity<?> addRole(@RequestBody @Valid UsernameIntegerDto usernameIntegerDto) {
+
+        // Try to edit the user
+        Optional<UserAdministrationError> ret = userAdministrationService.addScore(usernameIntegerDto.getUsername(),
+                usernameIntegerDto.getInteger());
+        return ret.map(
+                err -> {
+                    log.warn("Failed to edit user {}: {}", usernameIntegerDto.getUsername(), err.getMessage());
+
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
+
+                    return ResponseEntity.badRequest().body(errorResponse);
+
+                })
+                .orElseGet(
+                        () -> {
+                            log.info("User {}'s score was edited successfully", usernameIntegerDto.getUsername());
+
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("message", "User edited successfully");
+
+                            return ResponseEntity.ok(response);
+                        });
     }
 }
