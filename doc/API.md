@@ -8,10 +8,11 @@ une erreur de type 400 sera renvoyée, de la forme:
 
 ```JSON
 {
-    "fieldError": {
+    "fieldErrors": {
         "option": "erreur spécifique",
         ...
-    }
+    },
+    "message": "The request contains invalid data"
 }
 ```
 
@@ -23,7 +24,8 @@ Par exemple:
     "fieldError": {
         "password": "password too short",
         "username": "username must not be null"
-    }
+    },
+    "message": "The request contains invalid data"
 }
 ```
 
