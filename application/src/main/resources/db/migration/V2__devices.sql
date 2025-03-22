@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS devices (
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    properties TEXT NOT NULL
+);
