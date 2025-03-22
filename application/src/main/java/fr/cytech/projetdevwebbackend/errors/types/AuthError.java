@@ -1,12 +1,12 @@
 package fr.cytech.projetdevwebbackend.errors.types;
 
 /**
- * Enum representing authentication-related errors.
+ * class representing authentication-related errors.
  * 
  * @author fleefie
  * @since 2025-03-15
  */
-public enum AuthError {
+public enum AuthError implements Error {
     // Login errors
     USER_DOES_NOT_EXIST("User does not exist"),
     INVALID_CREDENTIALS("Invalid username/email or password"),

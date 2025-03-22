@@ -6,7 +6,7 @@ package fr.cytech.projetdevwebbackend.errors.types;
  * @author fleefie
  * @since 2025-03-15
  */
-public enum TokenError {
+public enum TokenError implements Error {
     EXPIRED_TOKEN("Token has expired"),
     INVALID_SIGNATURE("Invalid token signature"),
     MALFORMED_TOKEN("Malformed token"),

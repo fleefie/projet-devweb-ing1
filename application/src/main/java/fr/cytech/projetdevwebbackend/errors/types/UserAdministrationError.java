@@ -7,7 +7,7 @@ package fr.cytech.projetdevwebbackend.errors.types;
  * @author fleefie
  * @since 2025-03-15
  */
-public enum UserAdministrationError {
+public enum UserAdministrationError implements Error {
     USER_NOT_FOUND("The specified user was not found in the system"),
     PENDING_ROLE_NOT_FOUND("PENDING role not found in the system"),
     USER_ROLE_NOT_FOUND("USER role not found in the system"),
