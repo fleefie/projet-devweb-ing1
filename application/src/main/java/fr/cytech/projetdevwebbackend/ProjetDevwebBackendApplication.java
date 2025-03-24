@@ -64,13 +64,6 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
      * @param args Command line arguments passed to the application
      */
     public static void main(String[] args) {
-        // Early database dir creation
-        try {
-            Files.createDirectories(Path.of("database"));
-            Files.createDirectories(Path.of("database/devices"));
-        } catch (Exception e) {
-            // Fuck you
-        }
         SpringApplication.run(ProjetDevwebBackendApplication.class, args);
     }
 
