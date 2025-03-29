@@ -42,10 +42,8 @@ export const register = (username, name, email, password, passwordConfirm) => {
     passwordConfirm
   });
 };
-export const searchUsers = (username) =>{
-  return api.post('/api/users/search-users',{
-    username: username,
-  });
+export const searchUsers = (username) => {
+  return api.post('/users/search-users', {username: username})
 };
 
 export default api;
