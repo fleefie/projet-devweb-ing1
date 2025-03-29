@@ -28,6 +28,10 @@ api.interceptors.request.use(
 export const login = (usernameOrEmail, password) => {
   return api.post('/auth/login', { usernameOrEmail, password });
 };
+//Test de l'authentification complète
+export const goToAPI = () =>{
+  return api.post('/users/accept-user');
+}
 
 export const register = (username, name, email, password, passwordConfirm) => {
   return api.post('/auth/register', {
@@ -36,6 +40,11 @@ export const register = (username, name, email, password, passwordConfirm) => {
     email,
     password,
     passwordConfirm
+  });
+};
+export const searchUsers = (username) =>{
+  return api.post('/api/users/search-users',{
+    username: username,
   });
 };
 

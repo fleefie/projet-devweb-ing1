@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { goToAPI } from '../services/api';
 
 const Navbar = ({ isAuthenticated, onLogout }) => {
   const navStyle = {
@@ -46,6 +47,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
         {isAuthenticated ? (
           <>
             <Link to="/dashboard" style={linkStyle}>Dashboard</Link>
+            <Link to="/controlpanel" style={linkStyle}>API</Link>
             <button onClick={onLogout} style={buttonStyle}>Logout</button>
           </>
         ) : (
@@ -57,6 +59,7 @@ const Navbar = ({ isAuthenticated, onLogout }) => {
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+  };
+  
+  export default Navbar;
+  

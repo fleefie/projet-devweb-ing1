@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Navbar from './components/Navbar';
+import ControlPanel from "./components/ControlPanel"
 import './App.css';
 
 function App() {
@@ -35,6 +36,9 @@ function App() {
           <Routes>
             <Route path="/login" element={
               isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />
+            } />
+            <Route path="/controlpanel" element={
+              isAuthenticated ? <ControlPanel isAuthenticated={isAuthenticated} onLogout={handleLogout} /> : <Navigate to="/login" />
             } />
             <Route path="/register" element={
               isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
