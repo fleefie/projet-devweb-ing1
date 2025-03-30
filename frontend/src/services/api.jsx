@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const API_URL = '/api';
 
+
+
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
@@ -42,8 +44,12 @@ export const register = (username, name, email, password, passwordConfirm) => {
     passwordConfirm
   });
 };
-export const searchUsers = (username) => {
-  return api.post('/users/search-users', {username: username})
+export const searchUsers = (username, token) => {
+  return api.post('/users/search-users', {username: username}, {
+    headers:{
+      'Authorization' : `Bearer ${token}`
+    }
+  })
 };
 
 export default api;

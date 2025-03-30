@@ -24,7 +24,10 @@ const Login = ({ onLogin }) => {
 
     try {
       const response = await login(formData.usernameOrEmail, formData.password);
+      localStorage.setItem('token', response.data.token);
       onLogin(response.data.token);
+      console.log(response.data.token);
+      console.log(localStorage.getItem('token'));
     } catch (err) {
       setError(
         err.response?.data?.message || 
