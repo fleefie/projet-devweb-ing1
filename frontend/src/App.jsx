@@ -1,57 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Register from './components/Register';
-import Dashboard from './components/Dashboard';
-import Navbar from './components/Navbar';
-import ControlPanel from "./components/ControlPanel"
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import AccountPending from './pages/AccountPending';
+import UserSearch from './pages/UserSearch';
+import AdminUserSearch from './pages/AdminUserSearch';
+import AdminVerify from './pages/AdminVerify';
+import ProtectedRoute from './components/ProtectedRoute';
+import Home from './pages/Home';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  useEffect(() => {
-    // Check if token exists in localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-  
-  const handleLogin = (token) => {
-    localStorage.setItem('token', token);
-    setIsAuthenticated(true);
-  };
-  
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-  };
-
-  return (
-    <Router>
-      <div className="app">
-        <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-        <div className="container">
-          <Routes>
-            <Route path="/login" element={
-              isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />
-            } />
-            <Route path="/controlpanel" element={
-              isAuthenticated ? <ControlPanel isAuthenticated={isAuthenticated} onLogout={handleLogout} /> : <Navigate to="/login" />
-            } />
-            <Route path="/register" element={
-              isAuthenticated ? <Navigate to="/dashboard" /> : <Register />
-            } />
-            <Route path="/dashboard" element={
-              isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
-            } />
-            <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
-          </Routes>
-        </div>
-      </div>
-    </Router>
-  );
-}
+const App = () => (
+  <Router>
+    <NavBar />
+    <Routes>
+      <Route path="/" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+      } />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/account-pending" element={<AccountPending />} />
+      <Route path="/users" element={
+        <ProtectedRoute>
+          <UserSearch />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin" element={
+        <ProtectedRoute roles={['ADMIN']}>
+          <AdminUserSearch />
+        </ProtectedRoute>
+      } />
+      <Route path="/admin/verify" element={
+        <ProtectedRoute roles={['ADMIN']}>
+          <AdminVerify />
+        </ProtectedRoute>
+      } />
+    </Routes>
+  </Router>
+);
 
 export default App;
+

@@ -94,6 +94,16 @@ public class AuthServiceImpl implements AuthService {
                             loginDto.getUsernameOrEmail(),
                             loginDto.getPassword()));
 
+            // Check if user has PENDING authority
+            boolean hasPendingAuthority = authentication.getAuthorities().stream()
+                    .anyMatch(authority -> "ROLE_PENDING".equals(authority.getAuthority()) ||
+                            "PENDING".equals(authority.getAuthority()));
+
+            if (hasPendingAuthority) {
+                log.warn("Login denied for user: {} - Account pending verification", loginDto.getUsernameOrEmail());
+                return Either.left(AuthError.ACCOUNT_NOT_ACCEPTED);
+            }
+
             // Set the authentication in security context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
