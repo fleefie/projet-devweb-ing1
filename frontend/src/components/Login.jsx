@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { login } from '../services/api';
+import { authAPI } from '../services/api';
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
@@ -23,11 +23,11 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      const response = await login(formData.usernameOrEmail, formData.password);
-      localStorage.setItem('token', response.data.token);
-      onLogin(response.data.token);
-      console.log(response.data.token);
-      console.log(localStorage.getItem('token'));
+      const response = await authAPI.login({
+        usernameOrEmail: formData.usernameOrEmail, 
+        password: formData.password});
+      localStorage.setItem('accessToken', response.data.accessToken);
+      onLogin(response.data.accessToken);
     } catch (err) {
       setError(
         err.response?.data?.message || 

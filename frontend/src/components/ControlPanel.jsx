@@ -1,27 +1,19 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
-import { searchUsers } from '../services/api';
+import { userAPI } from '../services/api';
 
-const ControlPanel = ({ isAuthenticated, onLogout, navLinksStyle, linkStyle, buttonStyle }) => {
+const ControlPanel = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState('');
 
   const handleSearch = async () => {
     try {
-      const token = localStorage.getItem('token');
-      console.log('Token récupéré:', token);
-      if(!token){
-        setError("Il faut etre auth avec un token !");
-        return;
-      }
       // Appel de la fonction searchUsers
-      const response = await searchUsers(searchQuery, token);
-      console.log('Réponse de la recherche:', response); // Affiche les résultats dans la console
+      const response = await userAPI.searchUsers(searchQuery);
       setSearchResults(response.data); // Mettre à jour les résultats de recherche
       setError(''); // Réinitialiser l'erreur si la recherche est réussie
     } catch (err) {
-      console.error('Erreur lors de la recherche:', err);
       setError(err.response?.data?.message || 'Erreur lors de la recherche des utilisateurs.');
     }
   };
@@ -45,7 +37,7 @@ const ControlPanel = ({ isAuthenticated, onLogout, navLinksStyle, linkStyle, but
         <ul>
           {searchResults.map((user, index) => (
             <li key={index}>
-              {user.username} - {user.name}
+              {user.username} - {user.roleNames}
             </li>
           ))}
         </ul>

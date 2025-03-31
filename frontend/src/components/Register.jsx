@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../services/api';
+import { authAPI } from '../services/api';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -36,13 +36,14 @@ const Register = () => {
     }
 
     try {
-      await register(
-        formData.username,
-        formData.name,
-        formData.email,
-        formData.password,
-        formData.passwordConfirm
-      );
+
+      await authAPI.register({
+        username: formData.username,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        passwordConfirm: formData.passwordConfirm
+      });
       setSuccess('Registration successful! You can now login.');
       
       // Redirect to login page after a short delay
