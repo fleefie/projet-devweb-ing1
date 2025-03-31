@@ -28,4 +28,9 @@ cd application && ../mvnw spring-boot:create-image
 
 # Lancer l'application après l'avoir compilée
 java -jar application/target/application-VERSION.jar
+
+# Lancer le frontend seul en mode développement
+# ATTENTION, l'application entière doit être lancée sur le port 8080 pour
+# que le serveur de test frontend fonctionne! Il sera hébergé sur le port 3000
+cd frontend && npm run dev
 ```
