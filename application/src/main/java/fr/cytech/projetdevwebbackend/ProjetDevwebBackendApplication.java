@@ -1,10 +1,5 @@
 package fr.cytech.projetdevwebbackend;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -14,8 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.cytech.projetdevwebbackend.devices.model.Device;
-import fr.cytech.projetdevwebbackend.devices.model.repository.DeviceRepository;
 import fr.cytech.projetdevwebbackend.users.model.Role;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.RoleRepository;
@@ -29,8 +22,6 @@ import jakarta.transaction.Transactional;
 @SpringBootApplication
 @RestController
 public class ProjetDevwebBackendApplication implements CommandLineRunner {
-    @Autowired
-    private DeviceRepository deviceRepository;
 
     @Autowired
     private AuthServiceImpl authService;
@@ -88,22 +79,6 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
 
         // Testing area,
         // ### PUT YOUR TEMPORARY STUFF HERE ###
-        Map<String, Object> test = new HashMap<String, Object>();
-        test.put("arg1", "val1");
-        test.put("arg2", "val2");
-        Map<String, Object> arg3 = new HashMap<String, Object>();
-        arg3.put("arg3.1", "val3.1");
-        arg3.put("arg3.2", "val3.2");
-        test.put("arg3", arg3);
-
-        Device dev = new Device("Test Device");
-        dev.setProperties(test);
-        deviceRepository.save(dev);
-        System.out.println(dev.getProperties());
-        dev.setProperty("arg1", "UwU");
-        System.out.println(dev.getProperties());
-        deviceRepository.save(dev);
-        System.out.println(deviceRepository.jsonSearchByValue("UwU"));
     }
 
     /**
