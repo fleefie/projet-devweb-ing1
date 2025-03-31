@@ -1,5 +1,21 @@
 package fr.cytech.projetdevwebbackend.users.jwt;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.crypto.SecretKey;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Component;
+
+import fr.cytech.projetdevwebbackend.errors.types.TokenError;
+import fr.cytech.projetdevwebbackend.util.Either;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -8,18 +24,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
-
-import fr.cytech.projetdevwebbackend.errors.types.TokenError;
-import fr.cytech.projetdevwebbackend.util.Either;
-
-import javax.crypto.SecretKey;
-import java.util.Date;
 
 /**
  * Provider for JWT token generation, validation, and parsing.
@@ -64,9 +68,16 @@ public class JwtTokenProvider {
         Date currentDate = new Date();
         Date expirationDate = new Date(currentDate.getTime() + tokenValidityMillis);
 
+        // Add roles to the token
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(currentDate)
+                .claim("roles", roles)
                 .expiration(expirationDate)
                 .signWith(secretKey)
                 .compact();
