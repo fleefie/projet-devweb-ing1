@@ -13,13 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import fr.cytech.projetdevwebbackend.errors.types.TokenError;
 import fr.cytech.projetdevwebbackend.util.Either;
 
 import javax.crypto.SecretKey;
+
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Provider for JWT token generation, validation, and parsing.
@@ -64,10 +69,16 @@ public class JwtTokenProvider {
         Date currentDate = new Date();
         Date expirationDate = new Date(currentDate.getTime() + tokenValidityMillis);
 
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(currentDate)
                 .expiration(expirationDate)
+                .claim("roles", roles)
                 .signWith(secretKey)
                 .compact();
     }
