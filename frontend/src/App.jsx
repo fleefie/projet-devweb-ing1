@@ -10,6 +10,7 @@ import AdminVerify from './pages/AdminVerify';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import VisitorHub from './pages/VisitorHub';
+import ControlPanelComplexUser from './pages/ControlPanelComplexUser';
 
 const App = () => (
   <Router>
@@ -29,6 +30,11 @@ const App = () => (
           <UserSearch />
         </ProtectedRoute>
       } />
+      <Route path="/controlpanelcomplexuser" element={
+        <ProtectedRoute>
+          <ControlPanelComplexUser/>
+        </ProtectedRoute>
+      }/>
       <Route path="/admin" element={
         <ProtectedRoute roles={['ADMIN']}>
           <AdminUserSearch />
