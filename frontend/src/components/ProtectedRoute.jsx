@@ -15,7 +15,7 @@ const getTokenPayload = () => {
 const ProtectedRoute = ({ children, roles = [] }) => {
   const payload = getTokenPayload();
   if (!payload) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/visitorhub" replace />;
   }
 
   if (roles.length && !roles.some(role => payload.roles?.includes(role))) {

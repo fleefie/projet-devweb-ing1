@@ -9,6 +9,7 @@ import AdminUserSearch from './pages/AdminUserSearch';
 import AdminVerify from './pages/AdminVerify';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
+import VisitorHub from './pages/VisitorHub';
 
 const App = () => (
   <Router>
@@ -19,6 +20,7 @@ const App = () => (
             <Home />
           </ProtectedRoute>
       } />
+      <Route path="visitorhub" element={<VisitorHub/>}/>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/account-pending" element={<AccountPending />} />
