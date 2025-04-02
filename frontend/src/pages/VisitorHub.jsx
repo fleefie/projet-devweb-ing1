@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import searchUsers from '../services/api';
+import {searchDevices} from '../api/apiClient';
 
 const VisitorHub = () => {
-    const setResults = useState([]);
+    const [results, setResults] = useState([]);
     const [criteria, setCriteria] = useState('');
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        const res = await searchUsers({ username: criteria });
+        const res = await searchDevices({ infos: criteria });
         setResults(res.data);
     };
 
