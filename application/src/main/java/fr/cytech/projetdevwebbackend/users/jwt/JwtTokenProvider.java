@@ -18,29 +18,11 @@ import fr.cytech.projetdevwebbackend.errors.types.TokenError;
 import fr.cytech.projetdevwebbackend.util.Either;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
-
-import fr.cytech.projetdevwebbackend.errors.types.TokenError;
-import fr.cytech.projetdevwebbackend.util.Either;
-
-import javax.crypto.SecretKey;
-
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Provider for JWT token generation, validation, and parsing.
@@ -102,14 +84,25 @@ public class JwtTokenProvider {
 
     /**
      * Extracts the username from a JWT token.
+     * Returns either the username or an error if the token is invalid.
      *
      * @param token JWT token string
      * @return The username (subject) from the token
-     * @throws JwtException If the token is invalid or expired
      */
-    public String extractUsername(String token) {
-        return parseToken(token).map(Claims::getSubject)
-                .getRight();
+    public Either<TokenError, String> extractUsername(String token) {
+        if (token == null || token.isBlank()) {
+            logger.warn("Token is null or blank");
+            return Either.left(TokenError.INVALID_TOKEN);
+        }
+
+        return parseToken(token).fold(
+                error -> {
+                    logger.warn("Failed to extract username from token: {}", error);
+                    return Either.left(error);
+                },
+                claims -> {
+                    return Either.right(claims.getSubject());
+                });
     }
 
     /**
@@ -130,6 +123,10 @@ public class JwtTokenProvider {
      */
     public Either<TokenError, Claims> parseToken(String token) {
         try {
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
+
             Claims claims = Jwts.parser()
                     .verifyWith(secretKey)
                     .build()

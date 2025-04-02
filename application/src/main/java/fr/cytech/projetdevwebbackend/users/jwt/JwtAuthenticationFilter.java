@@ -65,7 +65,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Validate Token and authenticate user
             if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
                 // Get username from token
-                String username = jwtTokenProvider.extractUsername(token);
+                String username = jwtTokenProvider.extractUsername(token).fold(
+                        err -> {
+                            logger.error("Failed to extract username from token: {}", err.getMessage());
+                            throw new RuntimeException("Invalid token");
+                        },
+                        usernameResult -> {
+                            return usernameResult;
+                        });
 
                 // Load user details using functional approach
                 userDetailsProvider.findUserDetails(username).ifRight(userDetails -> {

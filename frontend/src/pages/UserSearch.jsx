@@ -19,7 +19,7 @@ const UserSearch = () => {
       </form>
       <ul>
         {results.map(user => (
-          <li key={user.username}>{user.username} - {user.roleNames.join(', ')}</li>
+          <li key={user.username}>{user.username} - Score: {user.points} - {user.roleNames.join(', ')}</li>
         ))}
       </ul>
     </div>

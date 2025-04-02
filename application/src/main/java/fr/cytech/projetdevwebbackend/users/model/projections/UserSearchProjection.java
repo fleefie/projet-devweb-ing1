@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public interface UserSearchProjection {
     String getUsername();
 
+    Integer getPoints();
+
     @JsonIgnore
     Set<Role> getRoles();
 

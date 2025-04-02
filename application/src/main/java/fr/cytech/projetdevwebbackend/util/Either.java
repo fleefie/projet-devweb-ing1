@@ -126,6 +126,17 @@ public abstract class Either<L, R> {
     public abstract <T> T fold(Function<L, T> leftFn, Function<R, T> rightFn);
 
     /**
+     * Folds without returning a value.
+     */
+    public void fold(Consumer<L> leftFn, Consumer<R> rightFn) {
+        if (isLeft()) {
+            leftFn.accept(getLeft());
+        } else {
+            rightFn.accept(getRight());
+        }
+    }
+
+    /**
      * The Left implementation of Either.
      *
      * @param <L> the left type

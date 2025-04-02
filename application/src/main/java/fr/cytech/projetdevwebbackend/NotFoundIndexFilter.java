@@ -98,6 +98,8 @@ public class NotFoundIndexFilter extends OncePerRequestFilter {
      * @return true if the request URI starts with the API path, false otherwise
      */
     private boolean isApiRequest(HttpServletRequest request) {
-        return request.getRequestURI().startsWith(contextPath + "/api");
+        return request.getRequestURI().startsWith(contextPath + "/api")
+                || request.getRequestURI().startsWith(contextPath + "/v3/api-docs")
+                || request.getRequestURI().startsWith(contextPath + "/swagger-ui");
     }
 }

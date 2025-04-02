@@ -20,7 +20,7 @@ const AdminUserSearch = () => {
       <ul>
         {results.map(user => (
           <li key={user.username}>
-            {user.username} - {user.email} - Roles: {user.roleNames.join(', ')}
+            {user.username} - {user.email} - Score: {user.points} - Roles: {user.roleNames.join(', ')}
           </li>
         ))}
       </ul>

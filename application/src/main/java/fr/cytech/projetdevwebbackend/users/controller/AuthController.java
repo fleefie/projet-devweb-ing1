@@ -46,12 +46,32 @@ public class AuthController {
     }
 
     /**
+     * Returns the user, using the JWT token from the request header.
+     */
+    @PostMapping("/me")
+    public ResponseEntity<?> me(@RequestHeader("Authorization") String token) {
+        log.debug("Fetching user information for token: {}", token);
+
+        Either<fr.cytech.projetdevwebbackend.errors.types.Error, User> userResult = authService.getUserFromToken(token);
+        return userResult.fold(
+                err -> {
+                    log.warn("Failed to fetch user information: {}", err);
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err.getMessage());
+                },
+                user -> {
+                    log.info("User information retrieved successfully: {}", user.getUsername());
+                    return ResponseEntity.ok(user);
+                });
+    }
+
+    /**
      * Authenticates a user and returns a JWT token.
      *
      * @param loginDto Login credentials (username/email and password)
      * @return JWT token wrapped in a response object or an error response
      */
     @PostMapping("/login")
+
     public ResponseEntity<?> login(@RequestBody @Valid LoginDto loginDto) {
         log.debug("Login attempt for user: {}", loginDto.getUsernameOrEmail());
 
