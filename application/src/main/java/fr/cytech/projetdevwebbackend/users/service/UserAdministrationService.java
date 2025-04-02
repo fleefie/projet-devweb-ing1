@@ -203,4 +203,15 @@ public class UserAdministrationService {
                     return Optional.of(UserAdministrationError.USER_NOT_FOUND);
                 });
     }
+
+    /**
+     * Get a user's score.
+     */
+    public Integer getUserScore(String username) {
+        return userRepository.findByUsernameOrEmail(username, username)
+                .map(user -> {
+                    return user.getPoints();
+                })
+                .orElse(0);
+    }
 }
