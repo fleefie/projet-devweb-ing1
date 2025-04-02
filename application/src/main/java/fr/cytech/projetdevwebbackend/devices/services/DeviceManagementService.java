@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import fr.cytech.projetdevwebbackend.devices.dto.DeviceDto;
 import fr.cytech.projetdevwebbackend.devices.model.Device;
 import fr.cytech.projetdevwebbackend.devices.model.repository.DeviceRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +31,7 @@ public class DeviceManagementService {
         this.deviceRepository = deviceRepository;
     }
 
+    @Transactional
     public Device createDevice(DeviceDto dto) {
         Device device = new Device(dto.getName(), dto.getProperties());
         return deviceRepository.save(device);
@@ -39,6 +41,7 @@ public class DeviceManagementService {
         return deviceRepository.findById(id);
     }
 
+    @Transactional
     public Optional<Device> updateDevice(Long id, DeviceDto dto) {
         return deviceRepository.findById(id).map(existing -> {
             existing.setName(dto.getName());
@@ -47,6 +50,7 @@ public class DeviceManagementService {
         });
     }
 
+    @Transactional
     public boolean deleteDevice(Long id) {
         return deviceRepository.findById(id).map(device -> {
             deviceRepository.delete(device);
