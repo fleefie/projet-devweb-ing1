@@ -6,4 +6,5 @@ export const searchUsers = (criteria) => axiosInstance.post('/users/search-users
 export const searchUsersAdmin = (criteria) => axiosInstance.post('/users/search-users-admin', criteria);
 export const acceptUser = (data) => axiosInstance.post('/users/accept-user', data);
 export const searchDevices = (criteria) => axiosInstance.post('/devices/search', criteria);
+export const createDevice = (criteria) => axiosInstance.post('/devices/createDevice', criteria,);
 //export const searchInfos = (data) => axiosInstance.post(PATH_TO_OBJECTS')
