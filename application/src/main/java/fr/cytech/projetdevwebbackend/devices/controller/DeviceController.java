@@ -1,16 +1,23 @@
 package fr.cytech.projetdevwebbackend.devices.controller;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import fr.cytech.projetdevwebbackend.devices.dto.DeviceDto;
+import fr.cytech.projetdevwebbackend.devices.dto.DeviceIdDto;
 import fr.cytech.projetdevwebbackend.devices.dto.DeviceSearchDto;
 import fr.cytech.projetdevwebbackend.devices.model.Device;
-import fr.cytech.projetdevwebbackend.devices.model.repository.DeviceRepository;
 import fr.cytech.projetdevwebbackend.devices.services.DeviceManagementService;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtTokenProvider;
+import fr.cytech.projetdevwebbackend.users.service.UserAdministrationService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,53 +27,100 @@ import lombok.extern.slf4j.Slf4j;
 public class DeviceController {
 
     private final DeviceManagementService deviceService;
-    private final DeviceRepository deviceRepository;
+    private final UserAdministrationService userAdministrationService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public DeviceController(DeviceManagementService deviceService, DeviceRepository deviceRepository) {
+    public DeviceController(DeviceManagementService deviceService,
+            UserAdministrationService userAdministrationService, JwtTokenProvider jwtTokenProvider) {
         this.deviceService = deviceService;
-        this.deviceRepository = deviceRepository;
+        this.userAdministrationService = userAdministrationService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping
-    public ResponseEntity<?> create(@RequestBody DeviceDto dto) {
+    @PostMapping("/create")
+    public ResponseEntity<?> createDevice(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid DeviceDto dto) {
         log.info("Creating device: {}", dto.getName());
         Device saved = deviceService.createDevice(dto);
-        return ResponseEntity.ok(saved);
+        jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                },
+                username -> {
+                    userAdministrationService.addScore(username, 1);
+                });
+        return ResponseEntity.ok(Map.of("message", "Device created successfully", "device", saved));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable Long id) {
-        log.debug("Fetching device with id: {}", id);
-        Optional<Device> found = deviceService.getDevice(id);
-        return found.<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PostMapping("/get")
+    public ResponseEntity<?> getDevice(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid DeviceIdDto idDto) {
+        log.debug("Fetching device with id: {}", idDto.getId());
+        Optional<Device> found = deviceService.getDevice(idDto.getId());
+        return found.map(device -> {
+            jwtTokenProvider.extractUsername(token).fold(
+                    err -> {
+                    },
+                    username -> {
+                        userAdministrationService.addScore(username, 1);
+                    });
+            return ResponseEntity.ok(Map.of("message", "Device fetched successfully", "device", device));
+        }).orElseGet(() -> {
+            log.warn("Device with id {} not found", idDto.getId());
+            return ResponseEntity.badRequest().body(Map.of("message", "Device not found"));
+        });
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody DeviceDto dto) {
-        log.debug("Updating device with id: {}", id);
-        Optional<Device> updated = deviceService.updateDevice(id, dto);
-        return updated.<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PostMapping("/update")
+    public ResponseEntity<?> updateDevice(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid DeviceDto dto) {
+        log.debug("Updating device with id: {}", dto.getId());
+        Optional<Device> updated = deviceService.updateDevice(dto.getId(), dto);
+        return updated.map(device -> {
+            jwtTokenProvider.extractUsername(token).fold(
+                    err -> {
+                    },
+                    username -> {
+                        userAdministrationService.addScore(username, 1);
+                    });
+            return ResponseEntity.ok(Map.of("message", "Device updated successfully", "device", device));
+        }).orElseGet(() -> {
+            log.warn("Device with id {} not found", dto.getId());
+            return ResponseEntity.badRequest().body(Map.of("message", "Device not found"));
+        });
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        log.debug("Deleting device with id: {}", id);
-        boolean deleted = deviceService.deleteDevice(id);
-        return deleted
-                ? ResponseEntity.ok().build()
-                : ResponseEntity.notFound().build();
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteDevice(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid DeviceIdDto idDto) {
+        log.debug("Deleting device with id: {}", idDto.getId());
+        boolean deleted = deviceService.deleteDevice(idDto.getId());
+        if (deleted) {
+            jwtTokenProvider.extractUsername(token).fold(
+                    err -> {
+                    },
+                    username -> {
+                        userAdministrationService.addScore(username, 1);
+                    });
+            return ResponseEntity.ok(Map.of("message", "Device deleted successfully"));
+        } else {
+            log.warn("Device with id {} not found", idDto.getId());
+            return ResponseEntity.badRequest().body(Map.of("message", "Device not found"));
+        }
     }
 
-    /**
-     * Gets every user in the system.
-     *
-     * @return ResponseEntity with success or error status
-     */
     @PostMapping("/search")
-    public ResponseEntity<?> searchUsers(@RequestBody @Valid DeviceSearchDto dto) {
-        return ResponseEntity.ok(deviceService.searchDevices(dto.getQuery()));
+    public ResponseEntity<?> searchDevices(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid DeviceSearchDto dto) {
+        log.debug("Searching devices with name: {}", dto.getQuery());
+        var found = deviceService.searchDevices(dto.getQuery());
+        // Increase user score if the token contains a user
+        jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                },
+                username -> {
+                    userAdministrationService.addScore(username, 1);
+                });
+        return ResponseEntity.ok(Map.of("message", "Devices fetched successfully", "devices", found));
     }
 }

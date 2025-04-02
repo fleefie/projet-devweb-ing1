@@ -1,7 +1,5 @@
 package fr.cytech.projetdevwebbackend.users.service;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,15 +16,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import fr.cytech.projetdevwebbackend.errors.types.AuthError;
+import fr.cytech.projetdevwebbackend.errors.types.Error;
+import fr.cytech.projetdevwebbackend.errors.types.TokenError;
+import fr.cytech.projetdevwebbackend.users.dto.LoginDto;
 import fr.cytech.projetdevwebbackend.users.jwt.JwtAuthResponse;
 import fr.cytech.projetdevwebbackend.users.jwt.JwtTokenProvider;
-import fr.cytech.projetdevwebbackend.users.dto.LoginDto;
 import fr.cytech.projetdevwebbackend.users.model.Role;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.RoleRepository;
 import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.util.Either;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of authentication service handling login and registration
@@ -217,5 +218,39 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("User registered successfully: {}", username);
         return Either.right(savedUser);
+    }
+
+    /**
+     * Returns the current user from the provided JWT token.
+     */
+    public Either<Error, User> getUserFromToken(String token) {
+        log.debug("Fetching user from token: {}", token);
+
+        // Validate and parse the token
+        if (!jwtTokenProvider.validateToken(token)) {
+            return Either.left(TokenError.INVALID_TOKEN);
+        }
+
+        String username = jwtTokenProvider.extractUsername(token).fold(
+                error -> {
+                    log.error("Failed to extract username from token: {}", error);
+                    return null;
+                },
+                usernameResult -> {
+                    return usernameResult;
+                });
+
+        if (username == null) {
+            return Either.left(TokenError.INVALID_TOKEN);
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElse(null);
+
+        if (user == null) {
+            return Either.left(AuthError.USER_DOES_NOT_EXIST);
+        }
+
+        return Either.right(user);
     }
 }
