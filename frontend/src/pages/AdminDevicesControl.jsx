@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { searchDevices,createDevice } from '../api/apiClient';
+import DeviceSearch from './DeviceSearch';
 
 const AdminDevicesControl = () => {
-  const [results, setResults] = useState([]);
-  const [criteria, setCriteria] = useState('');
+  const [setResults] = useState([]);
+  const [criteria] = useState('');
 
   // Create new device states
   const [newDevice, setNewDevice] = useState({
@@ -15,7 +16,7 @@ const AdminDevicesControl = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
-      const res = await searchDevices({ criteria });
+      const res = await searchDevices({ query: criteria });
       console.log("Response:", res);
       setResults(res.data.devices || []);
     } catch (error) {
@@ -59,7 +60,7 @@ const AdminDevicesControl = () => {
       let deviceToSend={...newDevice};
       try{
         deviceToSend.properties = JSON.parse(propertiesString);
-      } catch (error){
+      } catch {
         alert("Properties format is invalid, check JSON syntax");
         return;
       }
@@ -84,28 +85,8 @@ const AdminDevicesControl = () => {
   return (
     <div className="admin-devices-container">
       {/* Search Section */}
-      <div className="search-section">
-        <h2>Search Devices</h2>
-        <form onSubmit={handleSearch}>
-          <input 
-            value={criteria} 
-            onChange={(e) => setCriteria(e.target.value)} 
-            placeholder="Search device by name" 
-          />
-          <button type="submit">Search</button>
-        </form>
-        <div className="results">
-          {results.length > 0 ? (
-            <ul>
-              {results.map(device => (
-                <li key={device.id}>
-                  {device.name} - Type: {device.type} - Status: {device.status}
-                </li>
-              ))}
-            </ul>
-          ) : criteria ? <p>No devices found</p> : null}
-        </div>
-      </div>
+      <h2>Search Devices</h2>
+      <DeviceSearch/>
 
       {/* Create Device Section */}
       <div className="create-section">
