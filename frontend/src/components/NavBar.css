@@ -1,0 +1,63 @@
+nav {
+    display: flex;
+    justify-content: space-between; /* À conserver */
+    align-items: center;
+    background-color: #f8f9fa;
+    padding: 15px 5%;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    z-index: 1000;
+    box-sizing: border-box; /* Nouveau : inclut le padding dans la largeur */
+}
+
+.nav-left {
+    font-size: 18px;
+    font-weight: bold;
+    list-style: none;
+    /* margin-right supprimé */
+    white-space: nowrap; /* Empêche le retour à la ligne */
+}
+
+.nav-right {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    /* Aucun margin-left nécessaire */
+}
+
+/* Ajoutez ceci pour garantir la visibilité */
+.nav-right li {
+    white-space: nowrap;
+}
+
+.nav-right a {
+    text-decoration: none;
+    font-size: 16px;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.nav-right a:hover {
+    color: #0056b3;
+}
+
+.nav-right button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #007bff;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+}
+
+.nav-right button:hover {
+    color: #0056b3;
+    background-color: transparent;
+}

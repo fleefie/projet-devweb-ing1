@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ApiForm from '../components/ApiForm';
 import { login } from '../api/apiClient';
+import './Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,7 +20,11 @@ const Login = () => {
     { name: 'password', label: 'Password', type: 'password' },
   ];
 
-  return <ApiForm fields={fields} onSubmit={handleLogin} submitLabel="Login" />;
+  return (
+    <div className="login-container">
+      <ApiForm fields={fields} onSubmit={handleLogin} submitLabel="Login" />
+    </div>
+  );
 };
 
 export default Login;
