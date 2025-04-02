@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -39,6 +40,7 @@ public class DeviceController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createDevice(@RequestHeader("Authorization") String token,
             @RequestBody @Valid DeviceDto dto) {
         log.info("Creating device: {}", dto.getName());
@@ -72,6 +74,7 @@ public class DeviceController {
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateDevice(@RequestHeader("Authorization") String token,
             @RequestBody @Valid DeviceDto dto) {
         log.debug("Updating device with id: {}", dto.getId());
@@ -91,6 +94,7 @@ public class DeviceController {
     }
 
     @PostMapping("/delete")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deleteDevice(@RequestHeader("Authorization") String token,
             @RequestBody @Valid DeviceIdDto idDto) {
         log.debug("Deleting device with id: {}", idDto.getId());
