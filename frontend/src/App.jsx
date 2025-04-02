@@ -9,6 +9,7 @@ import AdminUserSearch from './pages/AdminUserSearch';
 import AdminVerify from './pages/AdminVerify';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
+import DeviceSearch from './pages/DeviceSearch';
 import VisitorHub from './pages/VisitorHub';
 import ControlPanelComplexUser from './pages/ControlPanelComplexUser';
 
@@ -45,6 +46,9 @@ const App = () => (
         <ProtectedRoute roles={['ADMIN']}>
           <AdminVerify />
         </ProtectedRoute>
+      } />
+      <Route path="/devices" element={
+          <DeviceSearch />
       } />
     </Routes>
   </Router>

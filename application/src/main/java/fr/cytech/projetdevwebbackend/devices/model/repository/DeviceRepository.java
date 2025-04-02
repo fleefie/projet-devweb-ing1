@@ -1,5 +1,7 @@
 package fr.cytech.projetdevwebbackend.devices.model.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,4 +16,5 @@ import fr.cytech.projetdevwebbackend.jpa.repository.JsonRepositoryFragment;
  */
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, Long>, JsonRepositoryFragment<Device, Long> {
+    List<Device> findByNameContainingIgnoreCase(String name);
 }
