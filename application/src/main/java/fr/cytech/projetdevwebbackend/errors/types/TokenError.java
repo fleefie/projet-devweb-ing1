@@ -12,7 +12,8 @@ public enum TokenError implements Error {
     MALFORMED_TOKEN("Malformed token"),
     UNSUPPORTED_TOKEN("Unsupported token"),
     EMPTY_CLAIMS("Token claims string is empty"),
-    GENERIC_TOKEN_ERROR("Error processing token");
+    GENERIC_TOKEN_ERROR("Error processing token"),
+    INVALID_TOKEN("Invalid token");
 
     private final String message;
 

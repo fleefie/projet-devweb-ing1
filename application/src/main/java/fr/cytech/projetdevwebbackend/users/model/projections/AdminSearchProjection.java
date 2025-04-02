@@ -17,6 +17,8 @@ public interface AdminSearchProjection {
 
     String getEmail();
 
+    Integer getPoints();
+
     @Value("#{target.enabled}")
     Boolean isEnabled();
 

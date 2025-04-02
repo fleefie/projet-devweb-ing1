@@ -8,46 +8,47 @@ const DeviceSearch = () => {
     const handleSearch = async (e) => {
         e.preventDefault();
         const res = await searchDevices({ query: criteria });
-        setResults(res.data);
+        setResults(res.data.devices);
     };
 
-    const renderProperties = (properties) => {
-        return Object.entries(properties).map(([key, value]) => {
-            if (typeof value === 'object') {
-                return (
-                    <li key={key}>
-                        {key}:
-                        <ul>
-                            {renderProperties(value)}
-                        </ul>
+    const PropertyRenderer = ({ propName, propValue }) => {
+        if (typeof propValue === 'object' && propValue !== null) {
+            return (
+                <div>
+                <span>{propName}:</span>
+                <ul>
+                {Object.entries(propValue).map(([key, val], idx) => (
+                    <li key={idx}>
+                    <PropertyRenderer propName={key} propValue={val} />
                     </li>
-                );
-            } else {
-                return (
-                    <li key={key}>
-                        {key}: {value}
-                    </li>
-                );
-            }
-        });
+                ))}
+                </ul>
+                </div>
+            );
+        }
+        return <span>{propName}: {propValue}</span>;
     };
 
     return (
         <div>
-            <form onSubmit={handleSearch}>
-                <input value={criteria} onChange={(e) => setCriteria(e.target.value)} placeholder="Search devices" />
-                <button type="submit">Search</button>
-            </form>
-            <ul>
-                {results.map(device => (
-                    <li key={device.id}>
-                        {device.name}
-                        <ul>
-                            {renderProperties(device.properties)}
-                        </ul>
-                    </li>
+        <form onSubmit={handleSearch}>
+        <input value={criteria} onChange={(e) => setCriteria(e.target.value)} placeholder="Search devices" />
+        <button type="submit">Search</button>
+        </form>
+        <ul>
+          {results.map(device => (
+            <li key={device.id}>
+              <h3>{device.name}</h3>
+              <div className="device-properties">
+                {Object.entries(device.properties).map(([propName, propValue], idx) => (
+                  <div key={idx}>
+                    <PropertyRenderer propName={propName} propValue={propValue} />
+                  </div>
                 ))}
-            </ul>
+              </div>
+            </li>
+          ))}
+        </ul>
         </div>
     );
 };
