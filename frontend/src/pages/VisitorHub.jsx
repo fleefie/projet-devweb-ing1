@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import searchUsers from '../services/api';
 
 const VisitorHub = () => {
-    const [results, setResults] = useState([]);
+    const setResults = useState([]);
     const [criteria, setCriteria] = useState('');
 
     const handleSearch = async (e) => {
@@ -23,7 +24,7 @@ const VisitorHub = () => {
             </div>
 
             <ul>
-                <p>Ici les résultats quand on aura fait les objets</p>
+               <p>Ici les résultats quand on aura fait les objets</p>
             </ul>
         </div>
     );
