@@ -5,14 +5,13 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import AccountPending from './pages/AccountPending';
 import UserSearch from './pages/UserSearch';
-import AdminUserSearch from './pages/AdminUserSearch';
+import AdminDashboard from './pages/AdminDashboard';
 import AdminVerify from './pages/AdminVerify';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import DeviceSearch from './pages/DeviceSearch';
 import VisitorHub from './pages/VisitorHub';
 import ControlPanelComplexUser from './pages/ControlPanelComplexUser';
-import AdminDevicesControl from './pages/AdminDevicesControl';
 
 const App = () => (
   <Router>
@@ -39,9 +38,7 @@ const App = () => (
       }/>
       <Route path="/admin" element={
         <ProtectedRoute roles={['ADMIN']}>
-          <AdminUserSearch />
-          <AdminVerify />
-          <AdminDevicesControl/>
+          <AdminDashboard />
         </ProtectedRoute>
       } />
       <Route path="/admin/verify" element={
