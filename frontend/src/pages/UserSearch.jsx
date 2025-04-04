@@ -21,6 +21,7 @@ const UserSearch = () => {
         {results.map(user => (
           <div>
             <h3>{user.username}</h3>
+            {console.log(user.birthdate)}
           <li key={user.username}> - Score: {user.points} - {user.roleNames.join(', ')} - Birthdate: {user.birthdate}</li>
           </div>
         ))}
