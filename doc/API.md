@@ -364,6 +364,89 @@ Réponses:
   }
   ```
 
+### /api/users/me
+
+Permet de récupérer les informations de l'utilisateur connecté.
+
+| Propriété  | Description                             |
+|------------|-----------------------------------------|
+| Type       | POST                                    |
+| Connecté ? | Oui                                     |
+| Permission | USER                                    |
+
+
+### /api/users/get-profile-picture
+
+Permet de récupérer la photo de profil d'un utilisateur.
+
+| Propriété  | Description                             |
+|------------|-----------------------------------------|
+| Type       | POST                                    |
+| Connecté ? | Oui                                     |
+| Permission | USER                                    |
+
+requete:
+```json
+{
+    "username": "Nom d'utilisateur"
+}
+```
+
+Réponses:
+- 200 OK: Retourne la photo de profil de l'utilisateur, en format binaire.
+- 400 Bad Request:  
+  ```json
+  {
+      "message": "Description de l'erreur (ex: problème de requête...)"
+  }
+  ```
+
+<!-- TODO: Faire cette doc: 
+/**
+     * Uploads a profile picture for the current user
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping(value = "/upload-profile-picture", consumes = "multipart/form-data")
+    public ResponseEntity<?> uploadProfilePicture(@RequestHeader("Authorization") String token,
+            @RequestParam("image") MultipartFile image) {
+
+
+-->
+### /api/users/upload-profile-picture
+
+Permet de mettre à jour la photo de profil d'un utilisateur. 
+La requête doit être envoyée en tant que `multipart/form-data`.
+
+| Propriété  | Description                             |
+|------------|-----------------------------------------|
+| Type       | POST                                    |
+| Connecté ? | Oui                                     |
+| Permission | USER                                    |
+
+Requête:
+
+```json
+{
+    "image": "Image de la photo de profil, au format binaire"
+}
+```
+
+Réponses:
+
+- 200 OK:  
+  ```json
+  {
+      "message": "Profile picture updated successfully"
+  }
+  ```
+
+- 400 Bad Request:  
+  ```json
+  {
+      "message": "Description de l'erreur (ex: problème de requête...)"
+  }
+  ```
+
 ---
 
 ## Gestion des erreurs
