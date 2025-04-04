@@ -8,7 +8,10 @@ export const acceptUser = (data) => axiosInstance.post('/users/accept-user', dat
 export const searchDevices = (criteria) => {
     return axiosInstance.post('/devices/search', criteria);
   };
+export const searchDevicesPublic = (criteria) => {return axiosInstance.post('/devices/public-search')};
   // Création d'un nouveau device
 export const createDevice = (deviceDto) => axiosInstance.post('/devices/create', deviceDto);
 export const updateDevice = (deviceDto) => axiosInstance.post('/devices/update', deviceDto);
+export const findByUsernameOrEmail = (data) => axiosInstance.post('/users/profile', data);
+
 //export const searchInfos = (data) => axiosInstance.post(PATH_TO_OBJECTS')

@@ -23,10 +23,17 @@ const VisitorHub = () => {
 
     return (
         <div>
-            <p style={{ textAlign: 'center'}}>Welcome to the Ygrec website, you are currently in guest mode.</p>
-            <p style={{ textAlign: 'center'}}>You still can search local informations about the city !</p>
+            <p style={{ textAlign: 'center', paddingTop: 60}}>Welcome to the Ygrec website, you are currently in guest mode.</p>
+            <p style={{ textAlign: 'center', paddingTop: 40}}>You still can search local informations about the city !</p>
             <div>
-                <DeviceSearch/>
+            <form onSubmit={handleSearch}>
+                <input
+                value={criteria}
+                onChange={(e) => setCriteria(e.target.value)}
+                placeholder="Search devices"
+                />
+                <button type="submit">Search</button>
+            </form>
             </div>
         </div>
     );
