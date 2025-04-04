@@ -13,6 +13,10 @@ public interface UserSearchProjection {
 
     Integer getPoints();
 
+    String getGender();
+
+    String getBirthdate();
+
     @JsonIgnore
     Set<Role> getRoles();
 

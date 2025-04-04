@@ -19,6 +19,10 @@ public interface AdminSearchProjection {
 
     Integer getPoints();
 
+    String getGender();
+
+    String getBirthdate();
+
     @Value("#{target.enabled}")
     Boolean isEnabled();
 
