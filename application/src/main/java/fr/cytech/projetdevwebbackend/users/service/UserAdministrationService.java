@@ -1,17 +1,23 @@
 package fr.cytech.projetdevwebbackend.users.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import fr.cytech.projetdevwebbackend.errors.types.Error;
+import fr.cytech.projetdevwebbackend.errors.types.FileError;
 import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
 import fr.cytech.projetdevwebbackend.users.model.Role;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.RoleRepository;
 import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.util.Either;
+import fr.cytech.projetdevwebbackend.util.services.ProfilePictureFileAccessService;
 import jakarta.transaction.Transactional;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,28 +36,20 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@NoArgsConstructor
 public class UserAdministrationService {
-
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProfilePictureFileAccessService profilePictureFileAccessService;
 
     /**
      * Standard role names used in the application.
      */
     private static final String ROLE_PENDING = "PENDING";
     private static final String ROLE_USER = "USER";
-
-    /**
-     * Creates a new UserAdministrationService with required dependencies.
-     *
-     * @param roleRepository Repository for role management
-     * @param userRepository Repository for user management
-     */
-    @Autowired
-    public UserAdministrationService(RoleRepository roleRepository, UserRepository userRepository) {
-        this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
-    }
 
     /**
      * Approves a pending user account by changing their role from PENDING to USER.
@@ -213,5 +211,52 @@ public class UserAdministrationService {
                     return user.getPoints();
                 })
                 .orElse(0);
+    }
+
+    /**
+     * Gets a user's profile picture.
+     * Profile pictures as stored under the database as "id.png".
+     */
+    public Either<Error, byte[]> getUserProfilePicture(String username) {
+        return userRepository.findByUsernameOrEmail(username, username)
+                .map(user -> {
+                    return profilePictureFileAccessService.read(user.getId()).fold(
+                            error -> {
+                                log.error("Error reading file: {}", error);
+                                return Either.<Error, byte[]>left(error);
+                            },
+                            optionalBytes -> optionalBytes.map(Either::<Error, byte[]>right)
+                                    .orElseGet(() -> {
+                                        try {
+                                            return Either.<Error, byte[]>right(
+                                                    profilePictureFileAccessService.getDefaultImage());
+                                        } catch (Exception e) {
+                                            return Either.<Error, byte[]>left(FileError.GENERAL_IO_ERROR);
+                                        }
+                                    }));
+                })
+                .orElseGet(() -> {
+                    log.error("User not found: {}", username);
+                    return Either.<Error, byte[]>left(UserAdministrationError.USER_NOT_FOUND);
+                });
+    }
+
+    public Optional<Error> setUserProfilePicture(String username, MultipartFile image) {
+        try {
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isEmpty()) {
+                return Optional.of(UserAdministrationError.USER_NOT_FOUND);
+            }
+
+            byte[] imageBytes = image.getBytes();
+            Long id = userOpt.get().getId();
+            return profilePictureFileAccessService.store(id, imageBytes).map(Optional::<Error>of)
+                    .orElseGet(() -> {
+                        return Optional.empty();
+                    });
+        } catch (IOException e) {
+            log.error("Error processing profile picture: {}", e.getMessage());
+            return Optional.of(FileError.GENERAL_IO_ERROR);
+        }
     }
 }

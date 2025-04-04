@@ -8,6 +8,8 @@ package fr.cytech.projetdevwebbackend.errors.types;
  */
 public enum FileError implements fr.cytech.projetdevwebbackend.errors.types.Error {
     GENERAL_IO_ERROR("Error during file access"),
+    EMPTY_FILE("File is empty"),
+    TRIED_TO_STORE_OUTSIDE_OF_ROOT("Attempted to store file outside of root path"),
     BAD_JSON("Object is bad JSON"),
     JSON_PROCESSING("Unable to serialize object");
 

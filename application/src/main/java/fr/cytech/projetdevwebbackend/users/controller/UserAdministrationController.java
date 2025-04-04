@@ -10,17 +10,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameIntegerDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameRoleDto;
+import fr.cytech.projetdevwebbackend.users.jwt.JwtTokenProvider;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.users.service.UserAdministrationService;
-import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
 import fr.cytech.projetdevwebbackend.util.Either;
+import fr.cytech.projetdevwebbackend.util.services.ProfilePictureFileAccessService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,15 +47,20 @@ public class UserAdministrationController {
 
     private final UserAdministrationService userAdministrationService;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final ProfilePictureFileAccessService fileAccessService;
 
     @Value("${app.admin-username}")
     private String adminUsername;
 
     @Autowired
     public UserAdministrationController(UserAdministrationService userAdministrationService,
-            UserRepository userRepository) {
+            UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
+            ProfilePictureFileAccessService fileAccessService) {
         this.userAdministrationService = userAdministrationService;
         this.userRepository = userRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.fileAccessService = fileAccessService;
     }
 
     /**
@@ -294,4 +304,70 @@ public class UserAdministrationController {
                             return ResponseEntity.ok(response);
                         });
     }
+
+    /**
+     * Gets a provided user's profile picture
+     */
+    @PostMapping("/get-profile-picture")
+    public ResponseEntity<?> getProfilePicture(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid UsernameDto usernameDto) {
+
+        // Check if the user is logged in
+        if (!jwtTokenProvider.validateToken(token)) {
+            return ResponseEntity.ok(fileAccessService.getDefaultImage());
+        }
+        return userAdministrationService.getUserProfilePicture(usernameDto.getUsername())
+                .fold(
+                        err -> {
+                            log.warn("Failed to get profile picture for user {}: {}", usernameDto.getUsername(),
+                                    err.getMessage());
+
+                            Map<String, Object> errorResponse = new HashMap<>();
+                            errorResponse.put("message", err.getMessage());
+
+                            return ResponseEntity.badRequest().body(errorResponse);
+                        },
+                        image -> {
+                            log.info("Successfully retrieved profile picture for user {}", usernameDto.getUsername());
+                            return ResponseEntity.ok(image);
+                        });
+    }
+
+    /**
+     * Uploads a profile picture for the current user
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping(value = "/upload-profile-picture", consumes = "multipart/form-data")
+    public ResponseEntity<?> uploadProfilePicture(@RequestHeader("Authorization") String token,
+            @RequestParam("image") MultipartFile image) {
+
+        String username = jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                    log.warn("Failed to extract username from token: {}", err.getMessage());
+                    return null;
+                },
+                user -> {
+                    return user;
+                });
+        if (username == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid authentication token");
+            return ResponseEntity.status(401).body(errorResponse);
+        }
+
+        return userAdministrationService.setUserProfilePicture(username, image).map(
+                err -> {
+                    log.warn("Failed to upload profile picture for user {}: {}", username, err.getMessage());
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
+                    return ResponseEntity.badRequest().body(errorResponse);
+                }).orElseGet(
+                        () -> {
+                            log.info("Successfully uploaded profile picture for user {}", username);
+                            Map<String, Object> response = new HashMap<>();
+                            response.put("message", "Profile picture uploaded successfully");
+                            return ResponseEntity.ok(response);
+                        });
+    }
+
 }
