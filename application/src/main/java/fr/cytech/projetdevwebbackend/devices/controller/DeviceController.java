@@ -114,7 +114,7 @@ public class DeviceController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchDevices(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> searchDevices(@RequestHeader(value = "Authorization", required = false) String token,
             @RequestBody @Valid DeviceSearchDto dto) {
         log.debug("Searching devices with name: {}", dto.getQuery());
         var found = deviceService.searchDevices(dto.getQuery());
