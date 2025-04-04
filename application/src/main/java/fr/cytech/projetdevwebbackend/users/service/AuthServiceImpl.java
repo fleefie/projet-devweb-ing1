@@ -154,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public Either<AuthError, User> register(String username, String password, String email,
-            String name, Boolean doHash) {
+            String name, String birthdate, String gender, Boolean doHash) {
         log.debug("Processing registration for username: {}, email: {}", username, email);
 
         // Empty field validation
@@ -169,6 +169,12 @@ public class AuthServiceImpl implements AuthService {
         }
         if (StringUtils.isBlank(name)) {
             return Either.left(AuthError.EMPTY_NAME);
+        }
+        if (StringUtils.isBlank(birthdate)) {
+            return Either.left(AuthError.EMPTY_BIRTHDATE);
+        }
+        if (StringUtils.isBlank(gender)) {
+            return Either.left(AuthError.EMPTY_GENDER);
         }
 
         // Format validation
