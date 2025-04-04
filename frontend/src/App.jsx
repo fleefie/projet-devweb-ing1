@@ -13,6 +13,7 @@ import DeviceSearch from './pages/DeviceSearch';
 import VisitorHub from './pages/VisitorHub';
 import ControlPanelComplexUser from './pages/ControlPanelComplexUser';
 import UserProfile from './pages/UserProfile';
+import Profile from './pages/Profile';
 
 const App = () => (
   <Router>
@@ -28,6 +29,12 @@ const App = () => (
       <Route path="/register" element={<Register />} />
       <Route path="/account-pending" element={<AccountPending />} />
       <Route path="/users/:username" element={<UserProfile/>}/>
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      }
+      />
       <Route path="/users" element={
         <ProtectedRoute>
           <UserSearch />

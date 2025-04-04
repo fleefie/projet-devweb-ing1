@@ -12,6 +12,6 @@ export const searchDevicesPublic = (criteria) => {return axiosInstance.post('/de
   // Création d'un nouveau device
 export const createDevice = (deviceDto) => axiosInstance.post('/devices/create', deviceDto);
 export const updateDevice = (deviceDto) => axiosInstance.post('/devices/update', deviceDto);
-export const findByUsernameOrEmail = (data) => axiosInstance.post('/users/profile', data);
+//Récupération de son propre profil
 
 //export const searchInfos = (data) => axiosInstance.post(PATH_TO_OBJECTS')
