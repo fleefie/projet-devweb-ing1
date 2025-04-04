@@ -1,0 +1,11 @@
+.register-container {
+  background: #D3D3D3;
+  padding: 40px;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  margin: 20px 0;
+}

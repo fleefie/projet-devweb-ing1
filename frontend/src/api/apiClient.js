@@ -10,5 +10,5 @@ export const searchDevices = (criteria) => {
   };
   // Création d'un nouveau device
 export const createDevice = (deviceDto) => axiosInstance.post('/devices/create', deviceDto);
-
+export const updateDevice = (deviceDto) => axiosInstance.post('/devices/update', deviceDto);
 //export const searchInfos = (data) => axiosInstance.post(PATH_TO_OBJECTS')

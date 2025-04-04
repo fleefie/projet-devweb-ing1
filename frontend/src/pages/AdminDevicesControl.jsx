@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { searchDevices,createDevice } from '../api/apiClient';
+import { searchDevices,createDevice,updateDevice } from '../api/apiClient';
 import DeviceSearch from './DeviceSearch';
 
 const AdminDevicesControl = () => {
@@ -85,12 +85,12 @@ const AdminDevicesControl = () => {
   return (
     <div className="admin-devices-container">
       {/* Search Section */}
-      <h2>Search Devices</h2>
+      <h3>Search Devices</h3>
       <DeviceSearch/>
 
       {/* Create Device Section */}
       <div className="create-section">
-        <h2>Create New Device</h2>
+        <h3>Create New Device</h3>
         <form onSubmit={handleCreateDevice}>
           
           <div className="form-group">
@@ -120,6 +120,10 @@ const AdminDevicesControl = () => {
           
           <button type="submit">Create Device</button>
         </form>
+      </div>
+      {/* Edit section*/}
+      <div>
+
       </div>
     </div>
   );
