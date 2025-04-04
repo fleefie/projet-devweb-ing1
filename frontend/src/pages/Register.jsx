@@ -21,7 +21,9 @@ const Register = () => {
     { name: 'password', label: 'Password', type: 'password' },
     { name: 'passwordConfirm', label: 'Confirm Password', type: 'password' },
     { name: 'name', label: 'Name' },
-    { name: 'firstName', label: 'First Name' } // Correction ici (utiliser camelCase)
+    { name: 'firstName', label: 'First Name' }, // Correction ici (utiliser camelCase)
+    { name: 'birthdate', label: 'Birthdate'},
+    { name: 'gender', label: 'Gender'}
   ];
 
   return (

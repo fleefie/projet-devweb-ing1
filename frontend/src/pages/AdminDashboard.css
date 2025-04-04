@@ -1,0 +1,11 @@
+.admin-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  padding: 20px;
+}
+
+button[type="submit"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
