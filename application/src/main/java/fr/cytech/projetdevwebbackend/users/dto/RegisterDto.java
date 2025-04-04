@@ -75,6 +75,21 @@ public class RegisterDto {
     private String passwordConfirm;
 
     /**
+     * Birthdate of the user. Format must be YYYY-MM-DD.
+     */
+    @NotNull(message = "Birthdate cannot be null")
+    @NotBlank(message = "Birthdate cannot be blank")
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Birthdate must be in the format 'YYYY-MM-DD'")
+    private String birthdate;
+
+    /**
+     * Gender of the user, simple String.
+     */
+    @NotNull(message = "Gender cannot be null")
+    @NotBlank(message = "Gender cannot be blank")
+    private String gender;
+
+    /**
      * Checks if the password and confirmation password match.
      *
      * @return true if passwords match, false otherwise

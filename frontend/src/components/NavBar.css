@@ -2,7 +2,7 @@ nav {
     display: flex;
     justify-content: space-between; /* À conserver */
     align-items: center;
-    background-color: #f8f9fa;
+    background-color: #D3D3D3;
     padding: 15px 5%;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     position: fixed;
@@ -15,6 +15,8 @@ nav {
 }
 
 .nav-left {
+	display: flex;
+	align-items: center;
     font-size: 18px;
     font-weight: bold;
     list-style: none;
@@ -22,8 +24,15 @@ nav {
     white-space: nowrap; /* Empêche le retour à la ligne */
 }
 
+.nav-center {
+	font-size: 30px;
+	display: flex;
+	align-items: center;
+	margin-left: 145px;
+}
 .nav-right {
     display: flex;
+	align-items: center;
     gap: 15px;
     list-style: none;
     padding: 0;

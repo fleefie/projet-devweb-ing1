@@ -73,12 +73,21 @@ public class User {
     @Column(nullable = false)
     private Boolean enabled = true;
 
-    @Column(nullable = false)
     @NonNull
-    @Getter
-    @Setter
+    @Column(nullable = false)
     private Integer points = 0;
 
+    @NonNull
+    @Column(nullable = false)
+    @NotBlank(message = "Gender is required")
+    private String gender;
+
+    @NonNull
+    @Column(nullable = false)
+    @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "Birthdate must be in the format 'YYYY-MM-DD'")
+    private String birthdate;
+
+    @NonNull
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;

@@ -32,6 +32,8 @@ public enum AuthError implements Error {
     EMPTY_USERNAME("Username cannot be empty"),
     EMPTY_EMAIL("Email cannot be empty"),
     EMPTY_NAME("Name cannot be empty"),
+    EMPTY_BIRTHDATE("Birthdate cannot be empty"),
+    EMPTY_GENDER("Gender cannot be empty"),
 
     // System errors
     AUTHENTICATION_ERROR("Authentication error occurred"),

@@ -83,7 +83,9 @@ Requête:
     "email": "Email de l'utilisateur",
     "password": "Mot de passe",
     "passwordConfirm": "Confirmation du mot de passe",
-    "name": "Nom de l'utilisateur"
+    "name": "Nom de l'utilisateur",
+    "gender": "genre de l'utilisateur",
+    "birthdate": "Date de naissance de l'utilisateur, format YYYY-MM-DD"
 }
 ```
 

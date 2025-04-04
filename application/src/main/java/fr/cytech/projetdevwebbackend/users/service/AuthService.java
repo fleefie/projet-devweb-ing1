@@ -24,15 +24,17 @@ public interface AuthService {
     /**
      * Registers a new user in the system.
      * 
-     * @param username Username for the new account
-     * @param password Password for the new account
-     * @param email    Email address for the new account
-     * @param name     Display name for the new account
-     * @param doHash   Whether to hash the password (false only for testing)
+     * @param username  Username for the new account
+     * @param password  Password for the new account
+     * @param email     Email address for the new account
+     * @param name      Display name for the new account
+     * @param birthdate Birthdate of the user
+     * @param gender    Gender of the user
+     * @param doHash    Whether to hash the password (false only for testing)
      * @return Either containing an error or the created user
      */
     Either<AuthError, User> register(String username, String password, String email,
-            String name, Boolean doHash);
+            String name, String birthdate, String gender, Boolean doHash);
 
     /**
      * Checks if a user exists by username or email.

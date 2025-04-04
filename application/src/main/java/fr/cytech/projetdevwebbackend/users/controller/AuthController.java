@@ -116,6 +116,8 @@ public class AuthController {
                 registerDto.getPassword(),
                 registerDto.getEmail(),
                 registerDto.getName(),
+                registerDto.getGender(),
+                registerDto.getBirthdate(),
                 true);
 
         return result.fold(

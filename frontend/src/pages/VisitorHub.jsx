@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {searchDevices} from '../api/apiClient';
-import DeviceSearch from './DeviceSearch';
 
 const VisitorHub = () => {
     const [results, setResults] = useState([]);
@@ -24,8 +23,8 @@ const VisitorHub = () => {
 
     return (
         <div>
-            <p>Salut jeune visiteur, tu n'es pas connecté</p>
-            <p>You still can search local informations about the city!</p>
+            <p style={{ textAlign: 'center'}}>Welcome to the Ygrec website, you are currently in guest mode.</p>
+            <p style={{ textAlign: 'center'}}>You still can search local informations about the city !</p>
             <div>
                 <DeviceSearch/>
             </div>

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { searchDevices } from '../api/apiClient';
+import { searchDevices, updateDevice } from '../api/apiClient';
 
 const DeviceSearch = () => {
   const [results, setResults] = useState([]);
   const [criteria, setCriteria] = useState('');
+  const [editedId, setEditedId] = useState('');
   const [editingDevice, setEditingDevice] = useState(null);
   const [editedName, setEditedName] = useState('');
   const [editedProperties, setEditedProperties] = useState({});
@@ -11,17 +12,32 @@ const DeviceSearch = () => {
   const handleActionButton = (device) => {
     // Initialiser l'état d'édition avec les valeurs actuelles du device
     setEditingDevice(device);
+    setEditedId(device.id);
     setEditedName(device.name);
     setEditedProperties({ ...device.properties });
   };
 
   const handleSaveChanges = async () => {
     try {
-      // Appel API pour mettre à jour le device
-      const response = await updateDevice(editingDevice.id, {
+      console.log("editingDevice avant mise à jour:", editingDevice);
+      console.log("editedId: ",editedId);
+      console.log("editedName:", editedName);
+      console.log("editedProperties:", editedProperties);
+      
+      // Vérifier si editingDevice est null ou undefined
+      if (!editingDevice) {
+        console.error("editingDevice est null ou undefined");
+        return;
+      }
+      //Création d'un objet avec les valeurs modifiées
+      const updatedDevice = {
+        ...editingDevice,
         name: editedName,
         properties: editedProperties,
-      });
+        id: editedId
+      };
+      // Appel API pour mettre à jour le device
+      const response = await updateDevice(updatedDevice);
 
       // Mettre à jour la liste des résultats
       const updatedResults = results.map((device) =>
@@ -33,6 +49,7 @@ const DeviceSearch = () => {
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
     }
+    window.location.reload();
   };
 
   const handlePropertyChange = (propName, value) => {
@@ -54,8 +71,8 @@ const DeviceSearch = () => {
         <div>
           <span>{propName}:</span>
           <ul>
-            {Object.entries(propValue).map(([key, val], idx) => (
-              <li key={idx}>
+            {Object.entries(propValue).map(([key, val], editedId) => (
+              <li key={editedId}>
                 <PropertyRenderer propName={key} propValue={val} />
               </li>
             ))}
@@ -91,7 +108,7 @@ const DeviceSearch = () => {
           />
           
           {Object.entries(editedProperties).map(([propName, propValue]) => (
-            <div key={propName}>
+            <div key={editedId}>
               <label>{propName}:</label>
               {typeof propValue === 'object' && propValue !== null ? (
                 <div>Propriété complexe (édition non prise en charge)</div>
@@ -115,14 +132,15 @@ const DeviceSearch = () => {
             <li key={device.id}>
               <h3>{device.name}</h3>
               <div className="device-properties">
-                {Object.entries(device.properties).map(
-                  ([propName, propValue], idx) => (
-                    <div key={idx}>
+                {/* Ligne problématique, probablement autour de 130 */}
+                {device.properties && Object.entries(device.properties).map(
+                  ([propName, propValue]) => (
+                    <div key={propName}>
                       <PropertyRenderer
                         propName={propName}
                         propValue={propValue}
                       />
-                    </div>
+              </div>
                   )
                 )}
               </div>
