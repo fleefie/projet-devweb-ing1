@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { searchUsers } from '../api/apiClient';
 import { useNavigate } from 'react-router-dom';
+import './UserSearch.css'; // Import du CSS
 
 const UserSearch = () => {
   const [results, setResults] = useState([]);
   const [criteria, setCriteria] = useState('');
   const navigate = useNavigate();
 
-//functions
   const handleClick = (user) => {
     console.log(user);
     navigate(`/users/${user.username}`);
@@ -29,24 +29,17 @@ const UserSearch = () => {
         />
         <button type="submit">Search</button>
       </form>
-      <ul>
+      <ul className="user-search-container">
         {results.map((user) => (
           <div
             key={user.username}
-            style={{
-              backgroundColor: 'beige',
-              margin: '30px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-            onClick={() => handleClick(user)} // Pass the user as a parameter
-            className="userSearch cursor-pointer p-4 border"
+            className={`user-card ${user.roleNames.includes('ADMIN') ? 'admin' : 'user'}`}
+            onClick={() => handleClick(user)}
           >
-            <h3>{user.username}</h3>
-            <li>
+            <h3 className="username">{user.username}</h3>
+            <div className="user-details">
               - Score: {user.points} - {user.roleNames.join(', ')} - Birthdate: {user.birthdate}
-            </li>
+            </div>
           </div>
         ))}
       </ul>
