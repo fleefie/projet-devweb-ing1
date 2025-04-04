@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {searchDevices} from '../api/apiClient';
-import DeviceSearch from './DeviceSearch';
 
 const VisitorHub = () => {
     const [results, setResults] = useState([]);
