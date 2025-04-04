@@ -26,6 +26,7 @@ const NavBar = () => {
       <div className="nav-left">
         <Link to="/">Home</Link>
       </div>
+	  <div className="nav-center">Ygrec</div>
       <ul className="nav-right">
         {token ? (
           <>

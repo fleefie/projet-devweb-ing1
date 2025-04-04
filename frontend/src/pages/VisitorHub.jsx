@@ -23,8 +23,8 @@ const VisitorHub = () => {
 
     return (
         <div>
-            <p>Salut jeune visiteur, tu n'es pas connecté</p>
-            <p>You still can search local informations about the city!</p>
+            <p style={{ textAlign: 'center'}}>Welcome to the Ygrec website, you are currently in guest mode.</p>
+            <p style={{ textAlign: 'center'}}>You still can search local informations about the city !</p>
             <div>
                 <DeviceSearch/>
             </div>
