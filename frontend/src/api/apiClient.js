@@ -12,6 +12,9 @@ export const searchDevicesPublic = (criteria) => {return axiosInstance.post('/de
   // Création d'un nouveau device
 export const createDevice = (deviceDto) => axiosInstance.post('/devices/create', deviceDto);
 export const updateDevice = (deviceDto) => axiosInstance.post('/devices/update', deviceDto);
-//Récupération de son propre profil
-
+// Récupération de son propre profil
+export const me = () => {
+  console.log("Token in localStorage:", localStorage.getItem('jwtToken'));
+  return axiosInstance.post('/auth/me');
+};
 //export const searchInfos = (data) => axiosInstance.post(PATH_TO_OBJECTS')
