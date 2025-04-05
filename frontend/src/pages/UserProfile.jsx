@@ -1,12 +1,24 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { searchUsers } from '../api/apiClient';
+import useCurrentUser from '../api/hookUseCurrentUser';
 
 const UserProfile = () => {
     const { username } = useParams();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [message, setMessage] = useState('');
+    const currentUser = useCurrentUser();
+    const isAdmin = currentUser?.roles?.some(roles => roles.name==='ADMIN');
+
+
+    const reportButton = () => {
+        setMessage('Utilisateur signalé.');
+        setTimeout(() => {
+            setMessage('');
+        }, 3000);
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -48,7 +60,7 @@ const UserProfile = () => {
 
     console.log('Rendering user profile:', userData);
     return (
-        <div>
+        <div style={{backgroundColor: 'beige', borderRadius: 4}}>
             <h2>{userData.username}</h2>
             
             <p>Name : {userData.name}</p>
@@ -56,7 +68,13 @@ const UserProfile = () => {
             <p>Score : {userData.points}</p>
             <p>Birthdate: {userData.birthdate}</p>
             <p>Gender: {userData.gender}</p>
-            <button>Signaler</button>
+            <button onClick={() => reportButton()}>Report</button>
+            {isAdmin &&(
+                <>
+                <button onClick={(console.log("admin clicked"))}>Edit profile</button>
+                </>
+            )}
+            
         </div>
     );
 };

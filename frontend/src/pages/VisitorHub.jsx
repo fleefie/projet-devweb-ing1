@@ -11,7 +11,7 @@ const VisitorHub = () => {
         try {
             const res = await searchDevices({ query: criteria });
             console.log("Response:", res);
-            setResults(res.data.devices || []);
+            setResults(res.data.devices);
         } catch (error) {
             console.error("Error searching devices:", error);
             if (error.response) {
@@ -20,6 +20,27 @@ const VisitorHub = () => {
             }
         }
     };
+    const PropertyRenderer = ({ propName, propValue }) => {
+        if (typeof propValue === 'object' && propValue !== null) {
+          return (
+            <div>
+              <span>{propName}:</span>
+              <ul>
+                {Object.entries(propValue).map(([key, val], editedId) => (
+                  <li key={editedId}>
+                    <PropertyRenderer propName={key} propValue={val} />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        }
+        return (
+          <span>
+            {propName}: {propValue}
+          </span>
+        );
+      };
 
     return (
         <div>
@@ -35,6 +56,28 @@ const VisitorHub = () => {
                 <button type="submit">Search</button>
             </form>
             </div>
+            
+            <ul>
+          {results.map((device) => (
+            <li key={device.id}>
+              <h3>{device.name}</h3>
+              <div className="device-properties">
+                {/* Ligne problématique, probablement autour de 130 */}
+                {device.properties && Object.entries(device.properties).map(
+                  ([propName, propValue]) => (
+                    <div key={propName}>
+                      <PropertyRenderer
+                        propName={propName}
+                        propValue={propValue}
+                      />
+              </div>
+                  )
+                )}
+              </div>
+              <button onClick={() => alert("You have to be logged in !")}>Modifier</button>
+            </li>
+          ))}
+        </ul>
         </div>
     );
 };

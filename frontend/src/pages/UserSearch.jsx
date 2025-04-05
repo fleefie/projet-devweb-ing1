@@ -9,7 +9,6 @@ const UserSearch = () => {
   const navigate = useNavigate();
 
   const handleClick = (user) => {
-    console.log(user);
     navigate(`/users/${user.username}`);
   };
 
