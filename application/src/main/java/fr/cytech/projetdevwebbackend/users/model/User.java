@@ -93,6 +93,42 @@ public class User {
     private Set<Role> roles;
 
     /**
+     * Reports made by this user against other users.
+     */
+    @OneToMany(mappedBy = "reporter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Report> reportsMade = new HashSet<>();
+
+    /**
+     * Reports received by this user from other users.
+     */
+    @OneToMany(mappedBy = "reported", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Report> reportsReceived = new HashSet<>();
+
+    /**
+     * Reports another user with a specific reason.
+     *
+     * @param targetUser The user to report
+     * @param reason     The reason for reporting the user
+     * @return true if the report was created, false if already reported or invalid
+     */
+    public boolean reportUser(User targetUser, String reason) {
+        if (targetUser.equals(this) || reason == null || reason.trim().isEmpty()) {
+            return false; // Cannot report self or without valid reason
+        }
+
+        // Check if already reported
+        boolean alreadyReported = reportsMade.stream()
+                .anyMatch(report -> report.getReported().equals(targetUser));
+
+        if (alreadyReported) {
+            return false;
+        }
+
+        Report report = new Report(this, targetUser, reason);
+        return reportsMade.add(report);
+    }
+
+    /**
      * Default constructor required by JPA.
      */
     protected User() {

@@ -33,3 +33,7 @@ build/
 
 ## DATABASE ##
 DATABASE.db
+database/
+
+### Testing ###
+frontend/src/testing

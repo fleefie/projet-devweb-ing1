@@ -1,6 +1,7 @@
 package fr.cytech.projetdevwebbackend.users.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,11 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
+import fr.cytech.projetdevwebbackend.users.dto.UserIdDto;
+import fr.cytech.projetdevwebbackend.users.dto.UserReportDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameIntegerDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameRoleDto;
 import fr.cytech.projetdevwebbackend.users.jwt.JwtTokenProvider;
+import fr.cytech.projetdevwebbackend.users.model.Report;
 import fr.cytech.projetdevwebbackend.users.model.User;
+import fr.cytech.projetdevwebbackend.users.model.projections.ReportProjection;
+import fr.cytech.projetdevwebbackend.users.model.repository.ReportRepository;
 import fr.cytech.projetdevwebbackend.users.model.repository.UserRepository;
 import fr.cytech.projetdevwebbackend.users.service.UserAdministrationService;
 import fr.cytech.projetdevwebbackend.util.Either;
@@ -49,6 +55,7 @@ public class UserAdministrationController {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ProfilePictureFileAccessService fileAccessService;
+    private final ReportRepository reportRepository;
 
     @Value("${app.admin-username}")
     private String adminUsername;
@@ -56,11 +63,12 @@ public class UserAdministrationController {
     @Autowired
     public UserAdministrationController(UserAdministrationService userAdministrationService,
             UserRepository userRepository, JwtTokenProvider jwtTokenProvider,
-            ProfilePictureFileAccessService fileAccessService) {
+            ProfilePictureFileAccessService fileAccessService, ReportRepository reportRepository) {
         this.userAdministrationService = userAdministrationService;
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.fileAccessService = fileAccessService;
+        this.reportRepository = reportRepository;
     }
 
     /**
@@ -370,4 +378,141 @@ public class UserAdministrationController {
                         });
     }
 
+    /**
+     * Creates a report for a user.
+     * <p>
+     * Requires USER role.
+     *
+     * @param token     The authentication token
+     * @param reportDto DTO containing the reported username and reason
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/create-report")
+    public ResponseEntity<?> createReport(@RequestHeader("Authorization") String token,
+            @RequestBody @Valid UserReportDto reportDto) {
+
+        // Extract the reporter's username from the token
+        String reporterUsername = jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                    log.warn("Failed to extract username from token: {}", err.getMessage());
+                    return null;
+                },
+                user -> user);
+
+        if (reporterUsername == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid authentication token");
+            return ResponseEntity.status(401).body(errorResponse);
+        }
+
+        // Validate that users exist
+        Optional<User> reporter = userRepository.findByUsername(reporterUsername);
+        Optional<User> reported = userRepository.findByUsername(reportDto.getReportedUsername());
+
+        if (reporter.isEmpty() || reported.isEmpty()) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "User not found");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // Check if user is trying to report themselves
+        if (reporterUsername.equals(reportDto.getReportedUsername())) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "You cannot report yourself");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        // Create and save the report
+        Report report = new Report(reporter.get(), reported.get(), reportDto.getReason());
+
+        try {
+            reportRepository.save(report);
+            log.info("User {} reported user {} for: {}", reporterUsername, reportDto.getReportedUsername(),
+                    reportDto.getReason());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Report submitted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error creating report: {}", e.getMessage());
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Could not create report. User may already be reported.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+    /**
+     * Gets all reports or reports for a specific user.
+     * <p>
+     * Requires ADMIN role.
+     *
+     * @param usernameDto DTO optionally containing a username to filter by
+     * @return ResponseEntity with the reports
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/get-reports")
+    public ResponseEntity<?> getReports(@RequestBody @Valid UsernameDto usernameDto) {
+        if (usernameDto.getUsername() == null || usernameDto.getUsername().isBlank()) {
+            // Return all reports if no username provided
+            log.info("Admin retrieving all reports");
+            return ResponseEntity.ok(reportRepository.findAll());
+        } else {
+            // Find the user
+            Optional<User> user = userRepository.findByUsername(usernameDto.getUsername());
+            if (user.isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("message", "User not found");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+
+            // Get reports made by the user and reports received by the user
+            List<ReportProjection> reportsMade = reportRepository.findReportsMadeByUserProjected(user.get().getId());
+            List<ReportProjection> reportsReceived = reportRepository
+                    .findReportsReceivedByUserProjected(user.get().getId());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("reportsMade", reportsMade);
+            response.put("reportsReceived", reportsReceived);
+
+            log.info("Admin retrieved reports for user: {}", usernameDto.getUsername());
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * Deletes a report.
+     * <p>
+     * Requires ADMIN role.
+     *
+     * @param reportIdDto DTO containing the ID of the report to delete
+     * @return ResponseEntity with success or error status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/delete-report")
+    public ResponseEntity<?> deleteReport(@RequestBody @Valid UserIdDto reportIdDto) {
+        Long reportId = Long.valueOf(reportIdDto.getValue());
+
+        if (!reportRepository.existsById(reportId)) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Report not found");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        try {
+            reportRepository.deleteById(reportId);
+            log.info("Admin deleted report with ID: {}", reportId);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Report deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error deleting report: {}", e.getMessage());
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Could not delete report");
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
 }
