@@ -35,6 +35,9 @@ const NavBar = () => {
             {roles.includes('ADMIN') && (
               <li><Link to="/admin">Admin Panel</Link></li>
             )}
+            {roles.includes('USER') && (
+              <li><Link to ="/profile">Profile</Link></li>
+            )}
           </>
         ) : (
           <>

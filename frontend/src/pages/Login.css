@@ -4,8 +4,8 @@ body {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to right, #4facfe, #00f2fe);
-  background-image: url('/public/joliparc.png');
+  background: linear-gradient(to right, #efe4e4, #91918e);
+  /*background-image: url('/public/joliparc.png');*/
   margin: 0;
   height: 100vh;
   background-size: cover;
