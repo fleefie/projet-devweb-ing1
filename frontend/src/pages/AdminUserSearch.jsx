@@ -18,7 +18,7 @@ const AdminUserSearch = () => {
         email: user.email,
         gender: user.gender,
         role: user.roleNames,
-        points: user.points
+        score: user.score
     });
 };
 
@@ -73,7 +73,7 @@ const handleInputChange = (field, value) => {
       <ul>
         {results.map(user => (
           <li key={user.username}>
-            {user.username} - {user.email} - Score: {user.points} - Roles: {user.roleNames.join(', ')}
+            {user.username} - {user.email} - Score: {user.score} - Roles: {user.roleNames.join(', ')}
             <button onClick={editUser(user)}>Edit</button>
           </li>
         ))}

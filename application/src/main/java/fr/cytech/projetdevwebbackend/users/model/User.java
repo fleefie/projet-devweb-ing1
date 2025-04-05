@@ -75,7 +75,7 @@ public class User {
 
     @NonNull
     @Column(nullable = false)
-    private Integer points = 0;
+    private Integer score = 0;
 
     @NonNull
     @Column(nullable = false)
@@ -162,7 +162,7 @@ public class User {
      * @param delta score difference to apply
      */
     public void addScore(Integer delta) {
-        this.points += delta;
+        this.score += delta;
     }
 
     /**

@@ -56,6 +56,24 @@ public class DeviceController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> createDevice(@RequestHeader("Authorization") String token,
             @RequestBody @Valid DeviceDto dto) {
+        // If user's SCORE is below 20, do not allow device creation.
+        Optional<User> user = userRepository.findByUsername(jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                    log.warn("Failed to extract username from token: {}", err.getMessage());
+                    return null;
+                },
+                username -> {
+                    return username;
+                }));
+        if (user.isPresent() && user.get().getScore() < 20) {
+            log.warn("User {} has insufficient score to create a device", user.get().getUsername());
+            return ResponseEntity.badRequest().body(Map.of("message", "Insufficient score to create a device"));
+        }
+        if (user.isEmpty()) {
+            log.warn("User not found");
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
         log.info("Creating device: {}", dto.getName());
         Device saved = deviceService.createDevice(dto);
         jwtTokenProvider.extractUsername(token).fold(
@@ -90,6 +108,25 @@ public class DeviceController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> updateDevice(@RequestHeader("Authorization") String token,
             @RequestBody @Valid DeviceDto dto) {
+
+        // If user's SCORE is below 20, do not allow device update.
+        Optional<User> user = userRepository.findByUsername(jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                    log.warn("Failed to extract username from token: {}", err.getMessage());
+                    return null;
+                },
+                username -> {
+                    return username;
+                }));
+        if (user.isPresent() && user.get().getScore() < 20) {
+            log.warn("User {} has insufficient score to update a device", user.get().getUsername());
+            return ResponseEntity.badRequest().body(Map.of("message", "Insufficient score to update a device"));
+        }
+        if (user.isEmpty()) {
+            log.warn("User not found");
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
         log.debug("Updating device with id: {}", dto.getId());
         Optional<Device> updated = deviceService.updateDevice(dto.getId(), dto);
         return updated.map(device -> {
@@ -110,6 +147,25 @@ public class DeviceController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> deleteDevice(@RequestHeader("Authorization") String token,
             @RequestBody @Valid DeviceIdDto idDto) {
+
+        // If user's SCORE is below 20, do not allow device deletion
+        Optional<User> user = userRepository.findByUsername(jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                    log.warn("Failed to extract username from token: {}", err.getMessage());
+                    return null;
+                },
+                username -> {
+                    return username;
+                }));
+        if (user.isPresent() && user.get().getScore() < 20) {
+            log.warn("User {} has insufficient score to delete a device", user.get().getUsername());
+            return ResponseEntity.badRequest().body(Map.of("message", "Insufficient score to delete a device"));
+        }
+        if (user.isEmpty()) {
+            log.warn("User not found");
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
         log.debug("Deleting device with id: {}", idDto.getId());
         boolean deleted = deviceService.deleteDevice(idDto.getId());
         if (deleted) {

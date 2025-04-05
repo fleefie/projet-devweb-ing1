@@ -212,7 +212,7 @@ public class UserAdministrationService {
     public Integer getUserScore(String username) {
         return userRepository.findByUsernameOrEmail(username, username)
                 .map(user -> {
-                    return user.getPoints();
+                    return user.getScore();
                 })
                 .orElse(0);
     }

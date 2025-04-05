@@ -37,7 +37,7 @@ const UserSearch = () => {
           >
             <h3 className="username">{user.username}</h3>
             <div className="user-details">
-              - Score: {user.points} - {user.roleNames.join(', ')} - Birthdate: {user.birthdate}
+              - Score: {user.score} - {user.roleNames.join(', ')} - Birthdate: {user.birthdate}
             </div>
           </div>
         ))}

@@ -65,7 +65,7 @@ const UserProfile = () => {
             
             <p>Name : {userData.name}</p>
             <p>First name: {userData.firstName}</p>
-            <p>Score : {userData.points}</p>
+            <p>Score : {userData.score}</p>
             <p>Birthdate: {userData.birthdate}</p>
             <p>Gender: {userData.gender}</p>
             <button onClick={() => reportButton()}>Report</button>

@@ -17,7 +17,7 @@ public interface AdminSearchProjection {
 
     String getEmail();
 
-    Integer getPoints();
+    Integer getScore();
 
     String getGender();
 

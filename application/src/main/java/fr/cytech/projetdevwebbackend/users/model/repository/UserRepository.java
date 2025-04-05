@@ -111,6 +111,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * Gets the score for a given user by username.
      */
-    @Query("SELECT u.points FROM User u WHERE u.username = :username")
+    @Query("SELECT u.score FROM User u WHERE u.username = :username")
     Integer getUserScoreByUsername(@Param("username") String username);
 }
