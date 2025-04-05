@@ -1,15 +1,19 @@
 package fr.cytech.projetdevwebbackend.users.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.cytech.projetdevwebbackend.errors.types.Error;
 import fr.cytech.projetdevwebbackend.errors.types.FileError;
 import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
+import fr.cytech.projetdevwebbackend.users.dto.UserUpdateDto;
 import fr.cytech.projetdevwebbackend.users.model.Role;
 import fr.cytech.projetdevwebbackend.users.model.User;
 import fr.cytech.projetdevwebbackend.users.model.repository.RoleRepository;
@@ -258,5 +262,116 @@ public class UserAdministrationService {
             log.error("Error processing profile picture: {}", e.getMessage());
             return Optional.of(FileError.GENERAL_IO_ERROR);
         }
+    }
+
+    /**
+     * Updates a user's information.
+     * 
+     * @param username Current username of the user
+     * @param dto      Data Transfer Object containing the new user information
+     * @return Optional of Error if there's a problem, empty Optional if successful
+     */
+    @Transactional
+    public Optional<Error> updateUser(String username, UserUpdateDto dto) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty()) {
+            return Optional.of(UserAdministrationError.USER_NOT_FOUND);
+        }
+
+        User user = userOpt.get();
+        boolean changes = false;
+
+        if (dto.getName() != null) {
+            if (dto.getName().isBlank()) {
+                return Optional.of(UserAdministrationError.INVALID_NAME);
+            }
+
+            if (!dto.getName().matches("[a-zA-Z0-9 ]+")) {
+                return Optional.of(UserAdministrationError.INVALID_NAME);
+            }
+
+            if (dto.getName().length() < 1 || dto.getName().length() > 100) {
+                return Optional.of(UserAdministrationError.INVALID_NAME);
+            }
+
+            user.setName(dto.getName());
+            changes = true;
+        }
+
+        if (dto.getEmail() != null) {
+            if (dto.getEmail().isBlank()) {
+                return Optional.of(UserAdministrationError.INVALID_EMAIL);
+            }
+
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            if (!dto.getEmail().matches(emailRegex)) {
+                return Optional.of(UserAdministrationError.INVALID_EMAIL);
+            }
+
+            if (!dto.getEmail().equals(user.getEmail())) {
+                Optional<User> existingUser = userRepository.findByEmail(dto.getEmail());
+                if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
+                    return Optional.of(UserAdministrationError.EMAIL_ALREADY_EXISTS);
+                }
+
+                user.setEmail(dto.getEmail());
+                changes = true;
+            }
+        }
+
+        if (dto.getPassword() != null) {
+            if (dto.getPassword().isBlank()) {
+                return Optional.of(UserAdministrationError.INVALID_PASSWORD);
+            }
+
+            if (dto.getPassword().length() < 15) {
+                return Optional.of(UserAdministrationError.INVALID_PASSWORD);
+            }
+
+            if (dto.getPasswordConfirm() == null || !dto.getPassword().equals(dto.getPasswordConfirm())) {
+                return Optional.of(UserAdministrationError.PASSWORDS_DO_NOT_MATCH);
+            }
+
+            String hashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+            user.setPassword(hashedPassword);
+            changes = true;
+        }
+
+        if (dto.getBirthdate() != null) {
+            if (dto.getBirthdate().isBlank()) {
+                return Optional.of(UserAdministrationError.INVALID_BIRTHDATE_FORMAT);
+            }
+
+            if (!dto.getBirthdate().matches("\\d{4}-\\d{2}-\\d{2}")) {
+                return Optional.of(UserAdministrationError.INVALID_BIRTHDATE_FORMAT);
+            }
+
+            try {
+                LocalDate birthdate = LocalDate.parse(dto.getBirthdate());
+                user.setBirthdate(birthdate.toString());
+                changes = true;
+            } catch (DateTimeParseException e) {
+                return Optional.of(UserAdministrationError.INVALID_BIRTHDATE_FORMAT);
+            }
+        }
+
+        if (dto.getGender() != null) {
+            user.setGender(dto.getGender());
+            changes = true;
+        }
+
+        if (changes) {
+            try {
+                userRepository.save(user);
+                log.info("User '{}' information updated successfully", username);
+            } catch (Exception e) {
+                log.error("Error updating user: {}", e.getMessage(), e);
+                return Optional.of(UserAdministrationError.DATABASE_ERROR);
+            }
+        } else {
+            log.info("No changes to update for user '{}'", username);
+        }
+
+        return Optional.empty();
     }
 }

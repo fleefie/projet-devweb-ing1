@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.cytech.projetdevwebbackend.errors.types.Error;
 import fr.cytech.projetdevwebbackend.errors.types.UserAdministrationError;
 import fr.cytech.projetdevwebbackend.users.dto.UserIdDto;
 import fr.cytech.projetdevwebbackend.users.dto.UserReportDto;
+import fr.cytech.projetdevwebbackend.users.dto.UserUpdateDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameIntegerDto;
 import fr.cytech.projetdevwebbackend.users.dto.UsernameRoleDto;
@@ -33,6 +36,7 @@ import fr.cytech.projetdevwebbackend.users.service.UserAdministrationService;
 import fr.cytech.projetdevwebbackend.util.Either;
 import fr.cytech.projetdevwebbackend.util.services.ProfilePictureFileAccessService;
 import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -514,5 +518,72 @@ public class UserAdministrationController {
             errorResponse.put("message", "Could not delete report");
             return ResponseEntity.badRequest().body(errorResponse);
         }
+    }
+
+    /**
+     * Updates user profile information.
+     * <p>
+     * Regular users can only update their own profiles, while admins can update any
+     * user.
+     * 
+     * @param token JWT authentication token
+     * @param dto   DTO containing updated user information
+     * @return ResponseEntity with success or error message
+     */
+    @PostMapping("/update")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token,
+            @RequestBody @Validated({ Default.class, UserUpdateDto.OnUpdate.class }) UserUpdateDto dto) {
+
+        // Extract username from token
+        String currentUsername = jwtTokenProvider.extractUsername(token).fold(
+                err -> {
+                    log.warn("Failed to extract username from token: {}", err.getMessage());
+                    return null;
+                },
+                username -> username);
+
+        if (currentUsername == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Invalid authentication token");
+            return ResponseEntity.status(401).body(errorResponse);
+        }
+
+        // Determine which username to update
+        String usernameToUpdate;
+        if (dto.getUsername() != null && !dto.getUsername().equals(currentUsername)) {
+            // Admin trying to update another user
+            boolean isAdmin = userRepository.findByUsername(currentUsername)
+                    .map(user -> user.hasRole("ADMIN"))
+                    .orElse(false);
+
+            if (!isAdmin) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("message", "You can only update your own profile");
+                return ResponseEntity.status(403).body(errorResponse);
+            }
+
+            usernameToUpdate = dto.getUsername();
+        } else {
+            // User updating their own profile
+            usernameToUpdate = currentUsername;
+        }
+
+        // Call service to update user
+        Optional<Error> result = userAdministrationService.updateUser(usernameToUpdate, dto);
+
+        return result.map(
+                err -> {
+                    log.warn("Failed to update user {}: {}", usernameToUpdate, err.getMessage());
+                    Map<String, Object> errorResponse = new HashMap<>();
+                    errorResponse.put("message", err.getMessage());
+                    return ResponseEntity.badRequest().body(errorResponse);
+                })
+                .orElseGet(() -> {
+                    log.info("User {} updated successfully", usernameToUpdate);
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("message", "User updated successfully");
+                    return ResponseEntity.ok(response);
+                });
     }
 }
