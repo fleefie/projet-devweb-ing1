@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Assure que l'image couvre toute la hauteur de la page */
+    background-image: url('./ville.jpg'); /* Remplacez par le chemin de votre image */
+    background-size: cover; /* L'image couvre toute la zone visible */
+    background-position: center center; /* Centrer l'image */
+    background-repeat: no-repeat; /* Éviter que l'image se répète */
+}
+
+
+.Search{
+  background-color: blue;
+  font-size: 20px;
+  margin-left: 12px;
+}
+
+
+.site-footer {
+background-color: blue;
+color: #fff;
+padding: 20px 0;
+text-align: center;
+font-size: 20px;
+}
+
+.footer-content {
+max-width: 1200px;
+margin: 0 auto;
+}
+
+.footer-links {
+list-style: none;
+padding: 0;
+margin: 10px 0 0;
+display: flex;
+justify-content: center;
+gap: 20px;
+flex-wrap: wrap;
+}
+
+.footer-links li a {
+color: #ccc;
+text-decoration: none;
+transition: color 0.3s ease;
+}
+
+.footer-links li a:hover {
+color: #fff;
+}
+
+/* Style général pour le conteneur des annonces */
+.announcements {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+.announcement-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Répartition flexible */
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+}
+
+.announcement-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation pour effet hover */
+    padding: 20px;
+    text-align: left;
+}
+
+.announcement-card:hover {
+    transform: translateY(-5px); /* Effet de survol */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombre accentuée sur survol */
+}
+
+.announcement-card h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.announcement-card p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.announcement-card small {
+    font-size: 0.875rem;
+    color: #777;
+}
+
+/* Style des tags */
+.announcement-card small {
+    display: block;
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+.announcement-card small span {
+    margin-right: 8px;
+    background-color: #e0e0e0;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+/* Style du titre des annonces */
+.h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
