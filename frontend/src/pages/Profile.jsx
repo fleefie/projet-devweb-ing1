@@ -48,20 +48,22 @@ const Profile = () => {
 
             // Création d'un objet avec les valeurs modifiées
             const updatedUser = {
-                username: editedUser.username,
-                email: editedUser.email,
-                firstName: editedUser.firstName,
-                name: editedUser.name,
-                birthdate: editedUser.birthdate,
-                gender: editedUser.gender
+                username: editedUser.username || userData.username,
+                email: editedUser.email || userData.email,
+                //firstName: editedUser.firstName || userData.firstName || "", // Valeur par défaut vide si undefined
+                name: editedUser.name || userData.name || "",
+                birthdate: editedUser.birthdate || userData.birthdate || "2000-01-01",
+                gender: editedUser.gender || userData.gender || ""
             };
-
+    
+            console.log('Envoyé a lapi: ',updateUser);
             // Appel API pour mettre à jour l'utilisateur
             const response = await updateUser(updatedUser);
 
             // Mettre à jour les données utilisateur
             setUserData(response.data);
             setEditingUser(null); // Fermer le mode édition
+            window.location.reload();
         } catch (error) {
             console.error('Erreur lors de la mise à jour:', error);
         }
@@ -101,13 +103,6 @@ const Profile = () => {
                         />
                     </div>
                     
-                    <div>
-                        <label>First Name:</label>
-                        <input 
-                            value={editedUser.firstName} 
-                            onChange={(e) => handleInputChange('firstName', e.target.value)} 
-                        />
-                    </div>
                     
                     <div>
                         <label>Name:</label>
@@ -143,7 +138,7 @@ const Profile = () => {
                     <ul>
                         <li><strong>Username:</strong> {userData.username}</li>
                         <li><strong>Mail:</strong> {userData.email}</li>
-                        <li><strong>First Name:</strong> {userData.firstName}</li>
+                        
                         <li><strong>Name:</strong> {userData.name}</li>
                         <li><strong>Birthdate:</strong> {userData.birthdate}</li>
                         <li><strong>Gender:</strong> {userData.gender}</li>

@@ -30,7 +30,7 @@ const UserProfile = () => {
         setEditedUser({
             username: user.username,
             email: user.email,
-            firstName: user.firstName,
+            //firstName: user.firstName,
             name: user.name,
             birthdate: user.birthdate,
             gender: user.gender
@@ -60,8 +60,10 @@ const UserProfile = () => {
             // Mettre à jour les données utilisateur
             setUserData(response.data);
             setEditingUser(null); // Fermer le mode édition
+            window.location.reload();
         } catch (error) {
             console.error('Erreur lors de la mise à jour:', error);
+            
         }
     };
 
@@ -89,6 +91,7 @@ const UserProfile = () => {
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 setError('Erreur lors de la récupération des données utilisateur.');
+                
             } finally {
                 console.log('Finished fetching user data.');
                 setLoading(false);
@@ -117,14 +120,16 @@ const UserProfile = () => {
             {editingUser ? (
                 <div className="edit-form2">
                     <h3>Edit {userData.username} profile</h3>
-                    {Object.keys(editedUser).map((field) => ( //Affiche dynamiquement chaque attribut
-                        <div key={field}>
-                            <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
-                            <input
-                                value={editedUser[field]}
-                                onChange={(e) => handleInputChange(field, e.target.value)}
-                            />
-                        </div>
+                    {Object.keys(editedUser).map((field) => (
+                        field !== 'firstName' && ( 
+                            <div key={field}>
+                                <label>{field.charAt(0).toUpperCase() + field.slice(1)}:</label>
+                                <input
+                                    value={editedUser[field]}
+                                    onChange={(e) => handleInputChange(field, e.target.value)}
+                                />
+                            </div>
+                        )
                     ))}
                     <div className="edit-actions2">
                         <button type="button" onClick={handleSaveChanges}>Enregistrer</button>
@@ -135,7 +140,7 @@ const UserProfile = () => {
                 <>
                     <div className="profile-details">
                         <p className="profile-field">Name: {userData.name}</p>
-                        <p className="profile-field">First name: {userData.firstName}</p>
+                        
                         <p className="profile-field">Score: {userData.score}</p>
                         <p className="profile-field">Birthdate: {userData.birthdate}</p>
                         <p className="profile-field">Gender: {userData.gender}</p>
