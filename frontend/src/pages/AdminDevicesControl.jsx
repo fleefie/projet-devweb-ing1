@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { searchDevices,createDevice,updateDevice } from '../api/apiClient';
 import DeviceSearch from './DeviceSearch';
+import JsonBuilder from '../components/builders/JsonBuilder';
 
 const AdminDevicesControl = () => {
   const [setResults] = useState([]);
@@ -82,6 +83,20 @@ const AdminDevicesControl = () => {
     }
   };
 
+  const [jsonOutput, setJsonOutput] = useState({});
+  
+  const handleJsonChange = (newJson) => {
+      setJsonOutput(newJson);
+      console.log('JSON updated:', jsonOutput);
+  };
+    
+  const initialJson = {
+      name: "Product",
+      price: 19.99,
+      inStock: true,
+      tags: []
+  };
+  
   return (
     <div className="admin-devices-container">
       {/* Search Section */}
@@ -122,8 +137,12 @@ const AdminDevicesControl = () => {
         </form>
       </div>
       {/* Edit section*/}
-      <div>
-
+      <div className="json-builder-page">
+        <JsonBuilder 
+          onChange={handleJsonChange} 
+          initialValue={initialJson}
+          title="Test builder JSON"
+        />
       </div>
     </div>
   );

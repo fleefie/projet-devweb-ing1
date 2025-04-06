@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import JsonBuilder from '../components/builders/JsonBuilder';
 
 const Home = () => {
  
@@ -22,14 +21,6 @@ const initialJson = {
   <div>
     <h1 style={{ textAlign: 'center'}}>Home Page</h1>
     <p>Welcome to your space.</p>
-
-  <div className="json-builder-page">
-      <JsonBuilder 
-        onChange={handleJsonChange} 
-        initialValue={initialJson}
-        title="Test builder JSON"
-      />
-  </div>
   </div>
 );
 };
