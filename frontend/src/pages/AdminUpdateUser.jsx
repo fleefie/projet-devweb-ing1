@@ -1,5 +1,6 @@
 //POUR LINSTANT INUTILE
 import React, { useState, useEffect } from 'react';
+import { updateUser } from '../api/apiClient';
 import { me } from '../api/apiClient';
 
 const AdminUpdateUser = () => {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { searchUsersAdmin } from '../api/apiClient';
+import { updateUser } from '../api/apiClient';
 
 const AdminUserSearch = () => {
   const [results, setResults] = useState([]);

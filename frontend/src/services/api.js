@@ -29,6 +29,7 @@ export const authAPI = {
 // User Management APIs
 export const userAPI = {
   acceptUser: (username) => api.post('/users/accept-user', { username }),
+  updateUser: (userData) => api.post('/users/update-user', userData),
   deleteUser: (username) => api.post('/users/delete-user', { username }),
   addRole: (username, role) => api.post('/users/add-role', { username, role }),
   removeRole: (username, role) => api.post('/users/remove-role', { username, role }),
