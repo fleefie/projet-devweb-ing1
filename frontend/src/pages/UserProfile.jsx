@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { searchUsers } from '../api/apiClient';
+import { updateUser } from '../api/apiClient';
 import useCurrentUser from '../api/hookUseCurrentUser';
 
 const UserProfile = () => {
