@@ -77,9 +77,7 @@ public class User {
     @Column(nullable = false)
     private Integer score = 0;
 
-    @NonNull
     @Column(nullable = false)
-    @NotBlank(message = "Gender is required")
     private String gender;
 
     @NonNull

@@ -123,7 +123,7 @@ public class ProjetDevwebBackendApplication implements CommandLineRunner {
             try {
                 // Create admin user
                 User admin = authService.register(adminUsername, adminPassword,
-                        adminEmail, "Administrator", "1999-01-01", "None", false)
+                        adminEmail, "Administrator", "1999-01-01", "Admingender", false)
                         .getRight();
 
                 // Set user as verified
