@@ -48,8 +48,12 @@ const Profile = () => {
 
             // Création d'un objet avec les valeurs modifiées
             const updatedUser = {
-                ...editingUser,
-                ...editedUser
+                username: editedUser.username,
+                email: editedUser.email,
+                firstName: editedUser.firstName,
+                name: editedUser.name,
+                birthdate: editedUser.birthdate,
+                gender: editedUser.gender
             };
 
             // Appel API pour mettre à jour l'utilisateur
