@@ -80,6 +80,11 @@ public class Announcement {
             return true;
         }
 
+        // If user is an admin, they can see all announcements
+        if (user != null && user.getRoles().stream().anyMatch(role -> role.getName().equals("ADMIN"))) {
+            return true;
+        }
+
         // Otherwise, check if user has any required role
         return user != null && roleRestrictions.stream()
                 .anyMatch(role -> user.getRoles().contains(role));
