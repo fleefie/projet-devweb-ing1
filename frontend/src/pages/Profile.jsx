@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { me } from '../api/apiClient';
+import { updateUser } from '../api/apiClient';
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
