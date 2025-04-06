@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { searchUsers } from '../api/apiClient';
 import { updateUser } from '../api/apiClient';
 import useCurrentUser from '../api/hookUseCurrentUser';
+import './UserProfile.css';
 
 const UserProfile = () => {
     const { username } = useParams();
@@ -111,10 +112,10 @@ const UserProfile = () => {
 
     console.log('Rendering user profile:', userData);
     return (
-        <div style={{ backgroundColor: 'beige', borderRadius: 4 }}>
-            <h2>{userData.username}</h2>
+        <div className={`profile-container ${editingUser ? 'editing-mode' : ''}`}>
+            <h2 className="profile-header">{userData.username}</h2>
             {editingUser ? (
-                <div className="edit-form">
+                <div className="edit-form2">
                     <h3>Edit {userData.username} profile</h3>
                     {Object.keys(editedUser).map((field) => ( //Affiche dynamiquement chaque attribut
                         <div key={field}>
@@ -125,24 +126,26 @@ const UserProfile = () => {
                             />
                         </div>
                     ))}
-                    <div className="edit-actions">
+                    <div className="edit-actions2">
                         <button type="button" onClick={handleSaveChanges}>Enregistrer</button>
                         <button type="button" onClick={() => setEditingUser(null)}>Annuler</button>
                     </div>
                 </div>
             ) : (
                 <>
-                    <p>Name: {userData.name}</p>
-                    <p>First name: {userData.firstName}</p>
-                    <p>Score: {userData.score}</p>
-                    <p>Birthdate: {userData.birthdate}</p>
-                    <p>Gender: {userData.gender}</p>
-                    <button onClick={reportButton}>Report</button>
-                    {isAdmin && (
-                        <>
-                            <button onClick={() => handleActionButton(userData)}>Edit profile</button>
-                        </>
-                    )}
+                    <div className="profile-details">
+                        <p className="profile-field">Name: {userData.name}</p>
+                        <p className="profile-field">First name: {userData.firstName}</p>
+                        <p className="profile-field">Score: {userData.score}</p>
+                        <p className="profile-field">Birthdate: {userData.birthdate}</p>
+                        <p className="profile-field">Gender: {userData.gender}</p>
+                        <button className="profile-button report-button" onClick={reportButton}>Report</button>
+                        {isAdmin && (
+                            <>
+                                <button className="profile-button edit-profile-button" onClick={() => handleActionButton(userData)}>Edit profile</button>
+                            </>
+                        )}
+                    </div>
                 </>
             )}
         </div>
